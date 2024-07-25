@@ -163,10 +163,67 @@ public class MuleChainVectorsOperations {
    * Example of an operation that uses the configuration and a connection instance to perform some action.
    */
   @MediaType(value = ANY, strict = false)
-  @Alias("Embedding-adhoc-RAG")
-  public String embeddingNew(@Config MuleChainVectorsConfiguration configuration){
+  @Alias("RAG-adhoc-load-document")
+  public String ragAdhocLoadDoc(@Config MuleChainVectorsConfiguration configuration){
     return "";
   }
+
+  /**
+   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Embedding-add-folder-to-store")
+  public String addFolderToStore(@Config MuleChainVectorsConfiguration configuration){
+    return "";
+  }
+
+    /**
+   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Embedding-add-text-to-store")
+  public String addTextToStore(@Config MuleChainVectorsConfiguration configuration){
+    return "";
+  }
+
+  /**
+   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Document-split-into-chunks")
+  public String documentSplitter(@Config MuleChainVectorsConfiguration configuration){
+    return "";
+  }
+
+    /**
+   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Document-parser")
+  public String documentParser(@Config MuleChainVectorsConfiguration configuration){
+    return "";
+  }
+
+   /**
+   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Embedding-delete-index")
+  public String embeddingDeleteIndex(@Config MuleChainVectorsConfiguration configuration){
+    return "";
+  }
+
+
+
+   /**
+   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Embedding-create-index")
+  public String embeddingCreateIndex(@Config MuleChainVectorsConfiguration configuration){
+    return "";
+  }
+
 
 
     /**

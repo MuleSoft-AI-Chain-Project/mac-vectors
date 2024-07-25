@@ -36,13 +36,77 @@ Default configuration
 
 
 ==== Associated Operations
+* <<Document-parser>> {nbsp}
+* <<Document-split-into-chunks>> {nbsp}
 * <<EMBEDDING-add-document-to-store>> {nbsp}
 * <<EMBEDDING-query-from-store>> {nbsp}
-* <<Embedding-adhoc-RAG>> {nbsp}
+* <<Embedding-add-folder-to-store>> {nbsp}
+* <<Embedding-add-text-to-store>> {nbsp}
+* <<Embedding-create-index>> {nbsp}
+* <<Embedding-delete-index>> {nbsp}
+* <<RAG-adhoc-load-document>> {nbsp}
 
 
 
 == Operations
+
+[[Document-parser]]
+=== Document Parser
+`<mulechain-vectors:document-parser>`
+
++++
+Example of an operation that uses the configuration and a connection instance to perform some action.
++++
+
+==== Parameters
+[cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
+|======================
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
+| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
+| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+|======================
+
+==== Output
+[cols=".^50%,.^50%"]
+|======================
+| *Type* a| String
+|======================
+
+==== For Configurations.
+* <<config>> {nbsp}
+
+
+
+[[Document-split-into-chunks]]
+=== Document Split Into Chunks
+`<mulechain-vectors:document-split-into-chunks>`
+
++++
+Example of an operation that uses the configuration and a connection instance to perform some action.
++++
+
+==== Parameters
+[cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
+|======================
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
+| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
+| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+|======================
+
+==== Output
+[cols=".^50%,.^50%"]
+|======================
+| *Type* a| String
+|======================
+
+==== For Configurations.
+* <<config>> {nbsp}
+
+
 
 [[EMBEDDING-add-document-to-store]]
 === EMBEDDING Add Document To Store
@@ -113,9 +177,125 @@ Query information from embedding store (in-Memory), which is imported from the s
 
 
 
-[[Embedding-adhoc-RAG]]
-=== Embedding Adhoc RAG
-`<mulechain-vectors:embedding-adhoc-rag>`
+[[Embedding-add-folder-to-store]]
+=== Embedding Add Folder To Store
+`<mulechain-vectors:embedding-add-folder-to-store>`
+
++++
+Example of an operation that uses the configuration and a connection instance to perform some action.
++++
+
+==== Parameters
+[cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
+|======================
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
+| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
+| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+|======================
+
+==== Output
+[cols=".^50%,.^50%"]
+|======================
+| *Type* a| String
+|======================
+
+==== For Configurations.
+* <<config>> {nbsp}
+
+
+
+[[Embedding-add-text-to-store]]
+=== Embedding Add Text To Store
+`<mulechain-vectors:embedding-add-text-to-store>`
+
++++
+Example of an operation that uses the configuration and a connection instance to perform some action.
++++
+
+==== Parameters
+[cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
+|======================
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
+| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
+| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+|======================
+
+==== Output
+[cols=".^50%,.^50%"]
+|======================
+| *Type* a| String
+|======================
+
+==== For Configurations.
+* <<config>> {nbsp}
+
+
+
+[[Embedding-create-index]]
+=== Embedding Create Index
+`<mulechain-vectors:embedding-create-index>`
+
++++
+Example of an operation that uses the configuration and a connection instance to perform some action.
++++
+
+==== Parameters
+[cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
+|======================
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
+| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
+| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+|======================
+
+==== Output
+[cols=".^50%,.^50%"]
+|======================
+| *Type* a| String
+|======================
+
+==== For Configurations.
+* <<config>> {nbsp}
+
+
+
+[[Embedding-delete-index]]
+=== Embedding Delete Index
+`<mulechain-vectors:embedding-delete-index>`
+
++++
+Example of an operation that uses the configuration and a connection instance to perform some action.
++++
+
+==== Parameters
+[cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
+|======================
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
+| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
+| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+|======================
+
+==== Output
+[cols=".^50%,.^50%"]
+|======================
+| *Type* a| String
+|======================
+
+==== For Configurations.
+* <<config>> {nbsp}
+
+
+
+[[RAG-adhoc-load-document]]
+=== RAG Adhoc Load Document
+`<mulechain-vectors:rag-adhoc-load-document>`
 
 +++
 Example of an operation that uses the configuration and a connection instance to perform some action.
