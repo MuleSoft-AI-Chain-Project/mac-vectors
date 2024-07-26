@@ -260,7 +260,7 @@ public class MuleChainVectorsOperations {
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("contextPath", contextPath);
     jsonObject.put("fileType", fileType);
-    jsonObject.put("segments", segments);
+    jsonObject.put("segments", segments.toString());
     
     return jsonObject.toString();
   }
@@ -461,6 +461,7 @@ public class MuleChainVectorsOperations {
 
     List<EmbeddingMatch<TextSegment>> relevantEmbeddings = store.findRelevant(questionEmbedding, maximumResults, minScore);
 
+
     String information = relevantEmbeddings.stream()
         .map(match -> match.embedded().text())
         .collect(joining("\n\n"));
@@ -474,6 +475,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("storeName", storeName);
     jsonObject.put("information", information);
     
+
 
     
     return jsonObject.toString();
