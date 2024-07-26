@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSASigner.dsa256;
 import org.json.JSONObject;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -36,7 +37,6 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
 
@@ -167,17 +167,7 @@ public class MuleChainVectorsOperations {
 
 
   /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
-   */
-  @MediaType(value = ANY, strict = false)
-  @Alias("RAG-adhoc-load-document")
-  public String ragAdhocLoadDoc(@Config MuleChainVectorsConfiguration configuration){
-    return "";
-  }
-
-
-    /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   * Adds Text to Embedding Store
    */
   @MediaType(value = ANY, strict = false)
   @Alias("Embedding-add-text-to-store")
@@ -190,12 +180,42 @@ public class MuleChainVectorsOperations {
     TextSegment textSegment = TextSegment.from(textToAdd);
     Embedding textEmbedding = embeddingModel.embed(textSegment).content();
     store.add(textEmbedding, textSegment); 
+    
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("status", "added");
+    jsonObject.put("textSegment", textSegment.toString());
+    jsonObject.put("textEmbedding", textEmbedding.toString());
+    jsonObject.put("storeName", storeName);
 
-    return "Embedding-store updated.";
+    return jsonObject.toString();
   }
 
+
+   /**
+   * Adds Text to Embedding Store
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Embedding-generate-from-text")
+  public String generateEmbedding(String textToAdd, @Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+
+    EmbeddingModel embeddingModel = createModel(configuration, modelParams);
+
+    TextSegment textSegment = TextSegment.from(textToAdd);
+    Embedding textEmbedding = embeddingModel.embed(textSegment).content();
+
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("Segment", textSegment.toString());
+    jsonObject.put("Embedding", textEmbedding.toString());
+    jsonObject.put("Dimension", textEmbedding.dimension());
+
+
+    return jsonObject.toString();
+  }
+
+
+
   /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   * Splits a document provided by full path in to a defined set of chucks and overlaps
    */
   @MediaType(value = ANY, strict = false)
   @Alias("Document-split-into-chunks")
@@ -239,38 +259,62 @@ public class MuleChainVectorsOperations {
         throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
     }
                                   
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("contextPath", contextPath);
+    jsonObject.put("fileType", fileType);
+    jsonObject.put("segments", segments);
     
-    return segments.toString();
+    return jsonObject.toString();
   }
 
-    /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
+   /**
+   * Parses a document by filepath and returns the text
    */
   @MediaType(value = ANY, strict = false)
   @Alias("Document-parser")
-  public String documentParser(@Config MuleChainVectorsConfiguration configuration){
-    return "";
-  }
-
-   /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
-   */
-  @MediaType(value = ANY, strict = false)
-  @Alias("Embedding-delete-index")
-  public String embeddingDeleteIndex(@Config MuleChainVectorsConfiguration configuration){
-    return "";
-  }
+  public String documentParser(String contextPath, @Config MuleChainVectorsConfiguration configuration,
+                              @ParameterGroup(name = "Context") fileTypeParameters fileType, 
+                              int maxSegmentSizeInChars, int maxOverlapSizeInChars,
+                              @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
 
 
 
-   /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
-   */
-  @MediaType(value = ANY, strict = false)
-  @Alias("Embedding-create-index")
-  public String embeddingCreateIndex(@Config MuleChainVectorsConfiguration configuration){
-    return "";
-  }
+
+    Document document = null;
+    switch (fileType.getFileType()) {
+      case "text":
+        document = loadDocument(contextPath, new TextDocumentParser());
+       break;
+      case "pdf":
+        document = loadDocument(contextPath, new ApacheTikaDocumentParser());
+        break;
+      case "url":
+        URL url = null;
+        try {
+          url = new URL(contextPath);
+        } catch (MalformedURLException e) {
+          e.printStackTrace();
+        }
+
+        Document htmlDocument = UrlDocumentLoader.load(url, new TextDocumentParser());
+        HtmlTextExtractor transformer = new HtmlTextExtractor(null, null, true);
+        document = transformer.transform(htmlDocument);
+        document.metadata().add("url", contextPath);
+
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
+      }
+        
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("contextPath", contextPath);
+    jsonObject.put("fileType", fileType);
+    jsonObject.put("documentText",document.text());
+    jsonObject.put("metadata",document.metadata());
+
+
+    return jsonObject.toString();
+}
 
 
   /**
@@ -329,8 +373,14 @@ public class MuleChainVectorsOperations {
       e.printStackTrace();
     }
 
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("filesCount", totalFiles);
+    jsonObject.put("folderPath", folderPath);
+    jsonObject.put("storeName", storeName);
+    jsonObject.put("status", "updated");
 
-    return "Embedding-store updated.";
+
+    return jsonObject.toString();
   }
 
 
@@ -385,8 +435,14 @@ public class MuleChainVectorsOperations {
         throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
     }
 
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("fileType", fileType);
+    jsonObject.put("filePath", contextPath);
+    jsonObject.put("storeName", storeName);
+    jsonObject.put("status", "updated");
 
-    return "Embedding-store updated.";
+
+    return jsonObject.toString();
   }
 
   /**
@@ -416,8 +472,15 @@ public class MuleChainVectorsOperations {
         .map(match -> match.embedded().text())
         .collect(joining("\n\n"));
 
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("maxResults", maxResults);
+    jsonObject.put("minScore", minScore);
+    jsonObject.put("question", question);
+    jsonObject.put("storeName", storeName);
+    jsonObject.put("information", information);
 
-    return information;
+    
+    return jsonObject.toString();
   }
 
 
