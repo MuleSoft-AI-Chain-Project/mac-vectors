@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.0.9</version>
+    <version>0.0.10</version>
     <packaging>mule-extension</packaging>
     <name>MuleChain Vectors Extension</name>
 
@@ -113,6 +113,13 @@
             <artifactId>langchain4j-chroma</artifactId>
             <version>0.32.0</version>
         </dependency>
+
+		<dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-milvus</artifactId>
+            <version>0.32.0</version>
+        </dependency>
+
 
 	</dependencies>
 	<repositories>

@@ -36,6 +36,7 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
+import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
 
@@ -62,7 +63,7 @@ public class MuleChainVectorsOperations {
   }
 
 
-  private EmbeddingStore<TextSegment> createStore(MuleChainVectorsConfiguration configuration, String indexName) {
+  private EmbeddingStore<TextSegment> createStore(MuleChainVectorsConfiguration configuration, String indexName, Integer dimension) {
     EmbeddingStore<TextSegment> store = null;
     JSONObject config = readConfigFile(configuration.getConfigFilePath());
     JSONObject vectorType;
@@ -74,13 +75,13 @@ public class MuleChainVectorsOperations {
           vectorUrl = vectorType.getString("CHROMA_URL");
           store = createChromaStore(vectorUrl, indexName);
         break;
-      /* case "MISTRAL_AI":
-          llmType = config.getJSONObject("MISTRAL_AI");
-          llmTypeKey = llmType.getString("MISTRAL_AI_API_KEY");
-          model = createMistralAiModel(llmTypeKey, modelParams);
+      case "MILVUS":
+          vectorType = config.getJSONObject("MILVUS");
+          vectorUrl = vectorType.getString("MILVUS_URL");
+          store = createMilvusStore(vectorUrl, indexName, dimension);
 
         break;
-      case "OLLAMA":
+      /* case "OLLAMA":
 
           llmType = config.getJSONObject("OLLAMA");
           String llmTypeUrl = llmType.getString("OLLAMA_BASE_URL");
@@ -164,6 +165,14 @@ public class MuleChainVectorsOperations {
   }
 
 
+  private EmbeddingStore<TextSegment> createMilvusStore(String baseUrl, String collectionName, Integer dimension) {
+    return MilvusEmbeddingStore.builder()
+      .uri(baseUrl)
+      .collectionName(collectionName)
+      .dimension(dimension)
+      .build();
+  }
+
 
   /**
    * Adds Text to Embedding Store
@@ -174,7 +183,8 @@ public class MuleChainVectorsOperations {
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
-    EmbeddingStore<TextSegment> store = createStore(configuration, storeName);
+
+    EmbeddingStore<TextSegment> store = createStore(configuration, storeName, embeddingModel.dimension());
 
     TextSegment textSegment = TextSegment.from(textToAdd);
     Embedding textEmbedding = embeddingModel.embed(textSegment).content();
@@ -322,7 +332,7 @@ public class MuleChainVectorsOperations {
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
-    EmbeddingStore<TextSegment> store = createStore(configuration, storeName);
+    EmbeddingStore<TextSegment> store = createStore(configuration, storeName, embeddingModel.dimension());
 
     EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
         .documentSplitter(DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars))
@@ -391,7 +401,7 @@ public class MuleChainVectorsOperations {
                                   
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
-    EmbeddingStore<TextSegment> store = createStore(configuration, storeName);
+    EmbeddingStore<TextSegment> store = createStore(configuration, storeName, embeddingModel.dimension());
 
     EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
         .documentSplitter(DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars))
@@ -453,7 +463,7 @@ public class MuleChainVectorsOperations {
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
-    EmbeddingStore<TextSegment> store = createStore(configuration, storeName);
+    EmbeddingStore<TextSegment> store = createStore(configuration, storeName, embeddingModel.dimension());
 
 
 
