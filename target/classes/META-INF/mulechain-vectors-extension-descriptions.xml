@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension-documentation>
+    <configs>
+        <config name="config">
+            <description><![CDATA[Default configuration]]></description>
+            <parameters>
+                <parameter name="embeddingProviderType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="vectorDBProviderType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="configFilePath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="expirationPolicy">
+                    <description><![CDATA[Configures the minimum amount of time that a dynamic configuration instance can remain idle before the runtime considers it eligible for expiration. This does not mean that the platform will expire the instance at the exact moment that it becomes eligible. The runtime will actually purge the instances when it sees it fit.]]></description>
+                </parameter>
+            </parameters>
+        </config>
+    </configs>
+    <connections/>
+    <extension name="MuleChain Vectors">
+        <description><![CDATA[This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.]]></description>
+        <parameters/>
+    </extension>
+    <operations>
+        <operation name="Document-parser">
+            <description><![CDATA[Parses a document by filepath and returns the text]]></description>
+            <parameters>
+                <parameter name="contextPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="fileType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="Document-split-into-chunks">
+            <description><![CDATA[Splits a document provided by full path in to a defined set of chucks and overlaps]]></description>
+            <parameters>
+                <parameter name="contextPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxSegmentSizeInChars">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxOverlapSizeInChars">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="fileType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="EMBEDDING-add-document-to-store">
+            <description><![CDATA[Add document of type text, pdf and url to embedding store, provide the storeName (Index, Collection, etc).]]></description>
+            <parameters>
+                <parameter name="storeName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="contextPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxSegmentSizeInChars">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxOverlapSizeInChars">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="fileType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="modelName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="EMBEDDING-query-from-store">
+            <description><![CDATA[Query information from embedding store , provide the storeName (Index, Collections, etc.)]]></description>
+            <parameters>
+                <parameter name="storeName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="question">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxResults">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="minScore">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="modelName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="Embedding-add-folder-to-store">
+            <description><![CDATA[Loads multiple files from a folder into the embedding store. URLs are not supported with this operation.]]></description>
+            <parameters>
+                <parameter name="storeName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="folderPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxSegmentSizeInChars">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxOverlapSizeInChars">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="fileType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="modelName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="Embedding-add-text-to-store">
+            <description><![CDATA[Adds Text to Embedding Store]]></description>
+            <parameters>
+                <parameter name="storeName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="textToAdd">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="modelName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="Embedding-generate-from-text">
+            <description><![CDATA[Adds Text to Embedding Store]]></description>
+            <parameters>
+                <parameter name="textToAdd">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="modelName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+    </operations>
+    <sources/>
+    <types/>
+</extension-documentation>

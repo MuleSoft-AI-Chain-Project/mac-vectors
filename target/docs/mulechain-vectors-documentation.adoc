@@ -53,7 +53,7 @@ Default configuration
 `<mulechain-vectors:document-parser>`
 
 +++
-Example of an operation that uses the configuration and a connection instance to perform some action.
+Parses a document by filepath and returns the text
 +++
 
 ==== Parameters
@@ -62,11 +62,8 @@ Example of an operation that uses the configuration and a connection instance to
 | Name | Type | Description | Default Value | Required
 | Configuration | String | The name of the configuration to use. | | *x*{nbsp}
 | Context Path a| String |  |  | *x*{nbsp}
-| Max Segment Size In Chars a| Number |  |  | *x*{nbsp}
-| Max Overlap Size In Chars a| Number |  |  | *x*{nbsp}
 | Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
 | File Type a| String |  |  +++text+++ | {nbsp}
-| Model Name a| String |  |  +++text-embedding-ada-002+++ | {nbsp}
 | Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
 | Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
 |======================
@@ -100,7 +97,6 @@ Splits a document provided by full path in to a defined set of chucks and overla
 | Max Overlap Size In Chars a| Number |  |  | *x*{nbsp}
 | Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
 | File Type a| String |  |  +++text+++ | {nbsp}
-| Model Name a| String |  |  +++text-embedding-ada-002+++ | {nbsp}
 | Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
 | Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
 |======================

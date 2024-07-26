@@ -221,8 +221,7 @@ public class MuleChainVectorsOperations {
   @Alias("Document-split-into-chunks")
   public String documentSplitter(String contextPath, @Config MuleChainVectorsConfiguration configuration,
                                 @ParameterGroup(name = "Context") fileTypeParameters fileType, 
-                                int maxSegmentSizeInChars, int maxOverlapSizeInChars,
-                                @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+                                int maxSegmentSizeInChars, int maxOverlapSizeInChars){
 
 
 
@@ -273,12 +272,7 @@ public class MuleChainVectorsOperations {
   @MediaType(value = ANY, strict = false)
   @Alias("Document-parser")
   public String documentParser(String contextPath, @Config MuleChainVectorsConfiguration configuration,
-                              @ParameterGroup(name = "Context") fileTypeParameters fileType, 
-                              int maxSegmentSizeInChars, int maxOverlapSizeInChars,
-                              @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
-
-
-
+                              @ParameterGroup(name = "Context") fileTypeParameters fileType){
 
     Document document = null;
     switch (fileType.getFileType()) {
@@ -472,12 +466,15 @@ public class MuleChainVectorsOperations {
         .map(match -> match.embedded().text())
         .collect(joining("\n\n"));
 
+
+
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("maxResults", maxResults);
     jsonObject.put("minScore", minScore);
     jsonObject.put("question", question);
     jsonObject.put("storeName", storeName);
     jsonObject.put("information", information);
+    
 
     
     return jsonObject.toString();

@@ -1,14 +1,14 @@
 {
   "name": "MuleChain Vectors",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "mulechain-vectors",
     "namespace": "http://www.mulesoft.org/schema/mule/mulechain-vectors",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/mulechain-vectors/current/mule-mulechain-vectors.xsd",
-    "schemaVersion": "0.0.6",
+    "schemaVersion": "0.0.7",
     "xsdFileName": "mule-mulechain-vectors.xsd"
   },
   "resources": [],
@@ -318,88 +318,6 @@
                 {
                   "type": {
                     "format": "java",
-                    "type": "Number",
-                    "annotations": {
-                      "classInformation": {
-                        "classname": "int",
-                        "hasDefaultConstructor": false,
-                        "isInterface": false,
-                        "isInstantiable": false,
-                        "isAbstract": true,
-                        "isFinal": true,
-                        "implementedInterfaces": [],
-                        "parent": "",
-                        "genericTypes": [],
-                        "isMap": false
-                      },
-                      "int": {}
-                    }
-                  },
-                  "hasDynamicType": false,
-                  "required": true,
-                  "isConfigOverride": false,
-                  "expressionSupport": "SUPPORTED",
-                  "role": "BEHAVIOUR",
-                  "dslConfiguration": {
-                    "allowsInlineDefinition": true,
-                    "allowsReferences": true,
-                    "allowTopLevelDefinition": false
-                  },
-                  "layoutModel": {
-                    "password": false,
-                    "text": false,
-                    "query": false,
-                    "order": 2
-                  },
-                  "allowedStereotypeModels": [],
-                  "name": "maxSegmentSizeInChars",
-                  "description": "",
-                  "modelProperties": {}
-                },
-                {
-                  "type": {
-                    "format": "java",
-                    "type": "Number",
-                    "annotations": {
-                      "classInformation": {
-                        "classname": "int",
-                        "hasDefaultConstructor": false,
-                        "isInterface": false,
-                        "isInstantiable": false,
-                        "isAbstract": true,
-                        "isFinal": true,
-                        "implementedInterfaces": [],
-                        "parent": "",
-                        "genericTypes": [],
-                        "isMap": false
-                      },
-                      "int": {}
-                    }
-                  },
-                  "hasDynamicType": false,
-                  "required": true,
-                  "isConfigOverride": false,
-                  "expressionSupport": "SUPPORTED",
-                  "role": "BEHAVIOUR",
-                  "dslConfiguration": {
-                    "allowsInlineDefinition": true,
-                    "allowsReferences": true,
-                    "allowTopLevelDefinition": false
-                  },
-                  "layoutModel": {
-                    "password": false,
-                    "text": false,
-                    "query": false,
-                    "order": 3
-                  },
-                  "allowedStereotypeModels": [],
-                  "name": "maxOverlapSizeInChars",
-                  "description": "",
-                  "modelProperties": {}
-                },
-                {
-                  "type": {
-                    "format": "java",
                     "type": "String"
                   },
                   "hasDynamicType": false,
@@ -416,7 +334,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 4,
+                    "order": 2,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -467,7 +385,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 5
+                    "order": 3
                   },
                   "allowedStereotypeModels": [],
                   "name": "fileType",
@@ -497,56 +415,6 @@
                   "hasDynamicType": false,
                   "required": false,
                   "isConfigOverride": false,
-                  "valueProviderModel": {
-                    "actingParameters": [],
-                    "partOrder": 1,
-                    "providerName": "modelName",
-                    "requiresConfiguration": false,
-                    "requiresConnection": false,
-                    "isOpen": true
-                  },
-                  "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
-                  "role": "BEHAVIOUR",
-                  "dslConfiguration": {
-                    "allowsInlineDefinition": true,
-                    "allowsReferences": true,
-                    "allowTopLevelDefinition": false
-                  },
-                  "layoutModel": {
-                    "password": false,
-                    "text": false,
-                    "query": false,
-                    "order": 6
-                  },
-                  "allowedStereotypeModels": [],
-                  "name": "modelName",
-                  "description": "",
-                  "modelProperties": {}
-                }
-              ],
-              "exclusiveParametersModels": [],
-              "layoutModel": {
-                "password": false,
-                "text": false,
-                "query": false,
-                "order": 3
-              },
-              "showInDsl": false,
-              "name": "Additional Properties",
-              "description": "",
-              "modelProperties": {}
-            },
-            {
-              "parameters": [
-                {
-                  "type": {
-                    "format": "java",
-                    "type": "String"
-                  },
-                  "hasDynamicType": false,
-                  "required": false,
-                  "isConfigOverride": false,
                   "expressionSupport": "NOT_SUPPORTED",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
@@ -558,7 +426,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 7,
+                    "order": 4,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -589,7 +457,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 8,
+                    "order": 5,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -606,7 +474,7 @@
                 "password": false,
                 "text": false,
                 "query": false,
-                "order": 4
+                "order": 3
               },
               "showInDsl": false,
               "name": "Output",
@@ -615,7 +483,7 @@
             }
           ],
           "name": "Document-parser",
-          "description": "Example of an operation that uses the configuration and a connection instance to perform some action.",
+          "description": "Parses a document by filepath and returns the text",
           "modelProperties": {},
           "kind": "operation"
         },
@@ -861,56 +729,6 @@
                   "hasDynamicType": false,
                   "required": false,
                   "isConfigOverride": false,
-                  "valueProviderModel": {
-                    "actingParameters": [],
-                    "partOrder": 1,
-                    "providerName": "modelName",
-                    "requiresConfiguration": false,
-                    "requiresConnection": false,
-                    "isOpen": true
-                  },
-                  "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
-                  "role": "BEHAVIOUR",
-                  "dslConfiguration": {
-                    "allowsInlineDefinition": true,
-                    "allowsReferences": true,
-                    "allowTopLevelDefinition": false
-                  },
-                  "layoutModel": {
-                    "password": false,
-                    "text": false,
-                    "query": false,
-                    "order": 6
-                  },
-                  "allowedStereotypeModels": [],
-                  "name": "modelName",
-                  "description": "",
-                  "modelProperties": {}
-                }
-              ],
-              "exclusiveParametersModels": [],
-              "layoutModel": {
-                "password": false,
-                "text": false,
-                "query": false,
-                "order": 3
-              },
-              "showInDsl": false,
-              "name": "Additional Properties",
-              "description": "",
-              "modelProperties": {}
-            },
-            {
-              "parameters": [
-                {
-                  "type": {
-                    "format": "java",
-                    "type": "String"
-                  },
-                  "hasDynamicType": false,
-                  "required": false,
-                  "isConfigOverride": false,
                   "expressionSupport": "NOT_SUPPORTED",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
@@ -922,7 +740,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 7,
+                    "order": 6,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -953,7 +771,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 8,
+                    "order": 7,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -970,7 +788,7 @@
                 "password": false,
                 "text": false,
                 "query": false,
-                "order": 4
+                "order": 3
               },
               "showInDsl": false,
               "name": "Output",
