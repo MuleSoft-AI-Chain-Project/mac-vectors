@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSASigner.dsa256;
 import org.json.JSONObject;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -302,7 +301,7 @@ public class MuleChainVectorsOperations {
         
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("contextPath", contextPath);
-    jsonObject.put("fileType", fileType);
+    jsonObject.put("fileType", fileType.getFileType());
     jsonObject.put("documentText",document.text());
     jsonObject.put("metadata",document.metadata());
 
@@ -430,7 +429,7 @@ public class MuleChainVectorsOperations {
     }
 
     JSONObject jsonObject = new JSONObject();
-    jsonObject.put("fileType", fileType);
+    jsonObject.put("fileType", fileType.getFileType());
     jsonObject.put("filePath", contextPath);
     jsonObject.put("storeName", storeName);
     jsonObject.put("status", "updated");
