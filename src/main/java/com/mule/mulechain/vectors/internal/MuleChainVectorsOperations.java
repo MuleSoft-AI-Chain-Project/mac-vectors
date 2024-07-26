@@ -2,12 +2,15 @@ package com.mule.mulechain.vectors.internal;
 
 import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.json.JSONObject;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -17,7 +20,9 @@ import static java.util.stream.Collectors.joining;
 import com.mule.mulechain.vectors.internal.helpers.fileTypeParameters;
 import static dev.langchain4j.data.document.loader.FileSystemDocumentLoader.loadDocument;
 
+import dev.langchain4j.data.document.BlankDocumentException;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.loader.UrlDocumentLoader;
 import dev.langchain4j.data.document.parser.TextDocumentParser;
 import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
@@ -31,6 +36,8 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
+import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
+
 import org.mule.runtime.extension.api.annotation.param.Config;
 
 
@@ -168,22 +175,23 @@ public class MuleChainVectorsOperations {
     return "";
   }
 
-  /**
-   * Example of an operation that uses the configuration and a connection instance to perform some action.
-   */
-  @MediaType(value = ANY, strict = false)
-  @Alias("Embedding-add-folder-to-store")
-  public String addFolderToStore(@Config MuleChainVectorsConfiguration configuration){
-    return "";
-  }
 
     /**
    * Example of an operation that uses the configuration and a connection instance to perform some action.
    */
   @MediaType(value = ANY, strict = false)
   @Alias("Embedding-add-text-to-store")
-  public String addTextToStore(@Config MuleChainVectorsConfiguration configuration){
-    return "";
+  public String addTextToStore(String storeName, String textToAdd,@Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+
+    EmbeddingModel embeddingModel = createModel(configuration, modelParams);
+
+    EmbeddingStore<TextSegment> store = createStore(configuration, storeName);
+
+    TextSegment textSegment = TextSegment.from(textToAdd);
+    Embedding textEmbedding = embeddingModel.embed(textSegment).content();
+    store.add(textEmbedding, textSegment); 
+
+    return "Embedding-store updated.";
   }
 
   /**
@@ -191,8 +199,48 @@ public class MuleChainVectorsOperations {
    */
   @MediaType(value = ANY, strict = false)
   @Alias("Document-split-into-chunks")
-  public String documentSplitter(@Config MuleChainVectorsConfiguration configuration){
-    return "";
+  public String documentSplitter(String contextPath, @Config MuleChainVectorsConfiguration configuration,
+                                @ParameterGroup(name = "Context") fileTypeParameters fileType, 
+                                int maxSegmentSizeInChars, int maxOverlapSizeInChars,
+                                @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+
+
+
+    List<TextSegment> segments;
+    DocumentSplitter splitter;
+    Document document = null;
+    switch (fileType.getFileType()) {
+      case "text":
+        document = loadDocument(contextPath, new TextDocumentParser());
+        splitter = DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars);
+        segments = splitter.split(document);
+        break;
+      case "pdf":
+        document = loadDocument(contextPath, new ApacheTikaDocumentParser());
+        splitter = DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars);
+        segments = splitter.split(document);
+        break;
+      case "url":
+        URL url = null;
+        try {
+          url = new URL(contextPath);
+        } catch (MalformedURLException e) {
+          e.printStackTrace();
+        }
+
+        Document htmlDocument = UrlDocumentLoader.load(url, new TextDocumentParser());
+        HtmlTextExtractor transformer = new HtmlTextExtractor(null, null, true);
+        document = transformer.transform(htmlDocument);
+        document.metadata().add("url", contextPath);
+        splitter = DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars);
+        segments = splitter.split(document);
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
+    }
+                                  
+    
+    return segments.toString();
   }
 
     /**
@@ -225,9 +273,70 @@ public class MuleChainVectorsOperations {
   }
 
 
+  /**
+   * Loads multiple files from a folder into the embedding store. URLs are not supported with this operation.
+   */
+  @MediaType(value = ANY, strict = false)
+  @Alias("Embedding-add-folder-to-store")
+  public String addFolderToStore(String storeName, String folderPath, @Config MuleChainVectorsConfiguration configuration,
+                                @ParameterGroup(name = "Context") fileTypeParameters fileType, 
+                                int maxSegmentSizeInChars, int maxOverlapSizeInChars,
+                                @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+
+    EmbeddingModel embeddingModel = createModel(configuration, modelParams);
+
+    EmbeddingStore<TextSegment> store = createStore(configuration, storeName);
+
+    EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+        .documentSplitter(DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars))
+        .embeddingModel(embeddingModel)
+        .embeddingStore(store)
+        .build();
+
+
+    long totalFiles = 0;
+    try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
+      totalFiles = paths.filter(Files::isRegularFile).count();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Total number of files to process: " + totalFiles);
+    AtomicInteger fileCounter = new AtomicInteger(0);
+    try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
+      paths.filter(Files::isRegularFile).forEach(file -> {
+        int currentFileCounter = fileCounter.incrementAndGet();
+        System.out.println("Processing file " + currentFileCounter + ": " + file.getFileName());
+        Document document = null;
+        try {
+          switch (fileType.getFileType()) {
+            case "text":
+              document = loadDocument(file.toString(), new TextDocumentParser());
+              ingestor.ingest(document);
+              break;
+            case "pdf":
+              document = loadDocument(file.toString(), new ApacheTikaDocumentParser());
+              ingestor.ingest(document);
+              break;
+            default:
+              throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
+          }
+        } catch (BlankDocumentException e) {
+          System.out.println("Skipping file due to BlankDocumentException: " + file.getFileName());
+        }
+      });
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+
+    return "Embedding-store updated.";
+  }
+
+
 
     /**
-   * Add document of type text, pdf and url to embedding store (in-memory), which is exported to the defined storeName (full path)
+   * Add document of type text, pdf and url to embedding store, provide the storeName (Index, Collection, etc).
    */
   @MediaType(value = ANY, strict = false)
   @Alias("EMBEDDING-add-document-to-store")
@@ -281,7 +390,7 @@ public class MuleChainVectorsOperations {
   }
 
   /**
-   * Query information from embedding store (in-Memory), which is imported from the storeName (full path)
+   * Query information from embedding store , provide the storeName (Index, Collections, etc.)
    */
   @MediaType(value = ANY, strict = false)
   @Alias("EMBEDDING-query-from-store")
@@ -292,7 +401,6 @@ public class MuleChainVectorsOperations {
     if (minScore == null || minScore == 0) {
       minScore = 0.7;
     }
-
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
