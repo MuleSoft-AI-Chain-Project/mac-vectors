@@ -370,10 +370,14 @@ public class MuleChainVectorsOperations {
           switch (fileType.getFileType()) {
             case "text":
               document = loadDocument(file.toString(), new TextDocumentParser());
+              System.out.println("File: " + file.toString());
+
               ingestor.ingest(document);
               break;
             case "pdf":
               document = loadDocument(file.toString(), new ApacheTikaDocumentParser());
+              System.out.println("File: " + file.toString());
+
               ingestor.ingest(document);
               break;
             default:
@@ -401,6 +405,7 @@ public class MuleChainVectorsOperations {
 
     /**
    * Add document of type text, pdf and url to embedding store, provide the storeName (Index, Collection, etc).
+     * @throws InterruptedException 
    */
   @MediaType(value = ANY, strict = false)
   @Alias("EMBEDDING-add-document-to-store")
@@ -421,15 +426,25 @@ public class MuleChainVectorsOperations {
         .build();
 
 
+    System.out.println("file Type: " + fileType.getFileType());
+    
     Document document = null;
+    Path filePath = Paths.get(contextPath.toString()); 
+
     switch (fileType.getFileType()) {
       case "text":
-        document = loadDocument(contextPath, new TextDocumentParser());
+        document = loadDocument(filePath.toString(), new TextDocumentParser());
         ingestor.ingest(document);
+
+        System.out.println("Document contextPath: " + contextPath);
+
         break;
       case "pdf":
-        document = loadDocument(contextPath, new ApacheTikaDocumentParser());
+        document = loadDocument(filePath.toString(), new ApacheTikaDocumentParser());
         ingestor.ingest(document);
+
+        System.out.println("Document contextPath: " + contextPath);
+
         break;
       case "url":
         URL url = null;
@@ -444,17 +459,19 @@ public class MuleChainVectorsOperations {
         document = transformer.transform(htmlDocument);
         document.metadata().add("url", contextPath);
         ingestor.ingest(document);
+
         break;
       default:
         throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
     }
+
+
 
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("fileType", fileType.getFileType());
     jsonObject.put("filePath", contextPath);
     jsonObject.put("storeName", storeName);
     jsonObject.put("status", "updated");
-
 
     return jsonObject.toString();
   }
