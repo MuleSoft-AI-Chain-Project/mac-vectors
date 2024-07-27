@@ -36,6 +36,7 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
+import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -81,14 +82,14 @@ public class MuleChainVectorsOperations {
           store = createMilvusStore(vectorUrl, indexName, dimension);
 
         break;
-      /* case "OLLAMA":
-
-          llmType = config.getJSONObject("OLLAMA");
-          String llmTypeUrl = llmType.getString("OLLAMA_BASE_URL");
-          model = createOllamaChatModel(llmTypeUrl, modelParams);
-
+      case "ELASTICSEARCH":
+          vectorType = config.getJSONObject("ELASTICSEARCH");
+          vectorUrl = vectorType.getString("ELASTICSEARCH_URL");
+          String userName = vectorType.getString("ELASTICSEARCH_USER");
+          String password = vectorType.getString("ELASTICSEARCH_PASSWORD");
+          store = createElasticStore(vectorUrl, userName, password, indexName, dimension);
         break;
-      case "COHERE":
+      /*case "COHERE":
           llmType = config.getJSONObject("COHERE");
           llmTypeKey = llmType.getString("COHERE_API_KEY");
           model = createCohereModel(llmTypeKey, modelParams);
@@ -173,6 +174,17 @@ public class MuleChainVectorsOperations {
       .build();
   }
 
+  private EmbeddingStore<TextSegment> createElasticStore(String baseUrl, String userName, String password, String collectionName, Integer dimension) {
+    return ElasticsearchEmbeddingStore.builder()
+    .serverUrl(baseUrl)
+    .userName(userName)
+    .password(password)
+    .indexName(collectionName)
+    .dimension(dimension)
+    .build();
+  }
+
+
 
   /**
    * Adds Text to Embedding Store
@@ -182,7 +194,6 @@ public class MuleChainVectorsOperations {
   public String addTextToStore(String storeName, String textToAdd,@Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
-
 
     EmbeddingStore<TextSegment> store = createStore(configuration, storeName, embeddingModel.dimension());
 
