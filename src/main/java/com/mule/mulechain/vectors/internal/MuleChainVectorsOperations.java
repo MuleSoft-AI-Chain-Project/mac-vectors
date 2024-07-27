@@ -31,6 +31,7 @@ import dev.langchain4j.data.document.transformer.HtmlTextExtractor;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.mistralai.MistralAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -38,6 +39,7 @@ import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
+import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
 
@@ -68,6 +70,8 @@ public class MuleChainVectorsOperations {
     EmbeddingStore<TextSegment> store = null;
     JSONObject config = readConfigFile(configuration.getConfigFilePath());
     JSONObject vectorType;
+    String userName;
+    String password;
 
     String vectorUrl;
     switch (configuration.getVectorDBProviderType()) {
@@ -85,11 +89,21 @@ public class MuleChainVectorsOperations {
       case "ELASTICSEARCH":
           vectorType = config.getJSONObject("ELASTICSEARCH");
           vectorUrl = vectorType.getString("ELASTICSEARCH_URL");
-          String userName = vectorType.getString("ELASTICSEARCH_USER");
-          String password = vectorType.getString("ELASTICSEARCH_PASSWORD");
+          userName = vectorType.getString("ELASTICSEARCH_USER");
+          password = vectorType.getString("ELASTICSEARCH_PASSWORD");
           store = createElasticStore(vectorUrl, userName, password, indexName, dimension);
         break;
-      /*case "COHERE":
+      case "PGVECTOR":
+          vectorType = config.getJSONObject("PGVECTOR");
+          String vectorHost = vectorType.getString("POSTGRES_HOST");
+          Integer vectorPort = vectorType.getInt("POSTGRES_PORT");
+          String vectorDatabase = vectorType.getString("POSTGRES_DATABASE");
+          userName = vectorType.getString("POSTGRES_USER");
+          password = vectorType.getString("POSTGRES_PASSWORD");
+          store = createPGVectorStore(vectorHost, vectorPort, vectorDatabase, userName, password, indexName, dimension);
+        break;
+
+        /*case "COHERE":
           llmType = config.getJSONObject("COHERE");
           llmTypeKey = llmType.getString("COHERE_API_KEY");
           model = createCohereModel(llmTypeKey, modelParams);
@@ -120,13 +134,13 @@ public class MuleChainVectorsOperations {
           llmTypeKey = llmType.getString("OPENAI_API_KEY");
           model = createOpenAiModel(llmTypeKey, modelParams);
         break;
-      /* case "MISTRAL_AI":
+      case "MISTRAL_AI":
           llmType = config.getJSONObject("MISTRAL_AI");
           llmTypeKey = llmType.getString("MISTRAL_AI_API_KEY");
-          model = createMistralAiModel(llmTypeKey, modelParams);
+          model = createMistralAIModel(llmTypeKey, modelParams);
 
         break;
-      case "OLLAMA":
+      /*case "OLLAMA":
 
           llmType = config.getJSONObject("OLLAMA");
           String llmTypeUrl = llmType.getString("OLLAMA_BASE_URL");
@@ -158,6 +172,14 @@ public class MuleChainVectorsOperations {
         .build();
     }
 
+  private EmbeddingModel createMistralAIModel(String llmTypeKey, MuleChainVectorsModelParameters modelParams) {
+    return MistralAiEmbeddingModel.builder()
+      .apiKey(llmTypeKey)
+      .modelName(modelParams.getModelName())
+      .build();
+  }
+
+
   private EmbeddingStore<TextSegment> createChromaStore(String baseUrl, String collectionName) {
     return ChromaEmbeddingStore.builder()
       .baseUrl(baseUrl)
@@ -184,6 +206,17 @@ public class MuleChainVectorsOperations {
     .build();
   }
 
+  private EmbeddingStore<TextSegment> createPGVectorStore(String host, Integer port, String Database, String userName, String password, String collectionName, Integer dimension) {
+    return PgVectorEmbeddingStore.builder()
+      .host(host)
+      .port(port)
+      .database(Database)
+      .user(userName)
+      .password(password)
+      .table(collectionName)
+      .dimension(dimension)
+      .build();
+  }
 
 
   /**
