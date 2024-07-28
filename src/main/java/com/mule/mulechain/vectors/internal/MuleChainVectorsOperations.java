@@ -40,6 +40,7 @@ import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
+import dev.langchain4j.store.embedding.weaviate.WeaviateEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
 
@@ -72,6 +73,9 @@ public class MuleChainVectorsOperations {
     JSONObject vectorType;
     String userName;
     String password;
+    String vectorHost;
+    Integer vectorPort;
+    String vectorDatabase; 
 
     String vectorUrl;
     switch (configuration.getVectorDBProviderType()) {
@@ -95,20 +99,23 @@ public class MuleChainVectorsOperations {
         break;
       case "PGVECTOR":
           vectorType = config.getJSONObject("PGVECTOR");
-          String vectorHost = vectorType.getString("POSTGRES_HOST");
-          Integer vectorPort = vectorType.getInt("POSTGRES_PORT");
-          String vectorDatabase = vectorType.getString("POSTGRES_DATABASE");
+          vectorHost = vectorType.getString("POSTGRES_HOST");
+          vectorPort = vectorType.getInt("POSTGRES_PORT");
+          vectorDatabase = vectorType.getString("POSTGRES_DATABASE");
           userName = vectorType.getString("POSTGRES_USER");
           password = vectorType.getString("POSTGRES_PASSWORD");
           store = createPGVectorStore(vectorHost, vectorPort, vectorDatabase, userName, password, indexName, dimension);
         break;
 
-        /*case "COHERE":
-          llmType = config.getJSONObject("COHERE");
-          llmTypeKey = llmType.getString("COHERE_API_KEY");
-          model = createCohereModel(llmTypeKey, modelParams);
+      case "WEAVIATE":
+          vectorType = config.getJSONObject("WEAVIATE");
+          vectorHost = vectorType.getString("WEAVIATE_HOST");
+          String vectorProtocol = vectorType.getString("WEAVIATE_PROTOCOL");
+          String vectorApiKey = vectorType.getString("WEAVIATE_APIKEY");
+          String weaviateIdex = indexName.substring(0, 1).toUpperCase() + indexName.substring(1);
+          store = createWeaviateStore(vectorProtocol, vectorHost, vectorApiKey, weaviateIdex);
         break;
-      case "AZURE_OPENAI":
+      /*case "AZURE_OPENAI":
           llmType = config.getJSONObject("AZURE_OPENAI");
           llmTypeKey = llmType.getString("AZURE_OPENAI_KEY");
           String llmEndpoint = llmType.getString("AZURE_OPENAI_ENDPOINT");
@@ -217,6 +224,22 @@ public class MuleChainVectorsOperations {
       .dimension(dimension)
       .build();
   }
+
+  private EmbeddingStore<TextSegment> createWeaviateStore(String protocol, String host, String apiKey, String collectionName) {
+    return WeaviateEmbeddingStore.builder()
+      .scheme(protocol)
+      .host(host)
+      // "Default" class is used if not specified. Must start from an uppercase letter!
+      .objectClass(collectionName)
+      // If true (default), then WeaviateEmbeddingStore will generate a hashed ID based on provided
+      // text segment, which avoids duplicated entries in DB. If false, then random ID will be generated.
+      .avoidDups(true)
+      // Consistency level: ONE, QUORUM (default) or ALL.
+      .consistencyLevel("ALL")
+      .apiKey(apiKey)
+      .build();
+  }
+
 
 
   /**

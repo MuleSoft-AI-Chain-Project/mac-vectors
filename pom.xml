@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.0.25</version>
+    <version>0.0.27</version>
     <packaging>mule-extension</packaging>
     <name>MuleChain Vectors Extension</name>
 
@@ -137,6 +137,13 @@
             <artifactId>langchain4j-pgvector</artifactId>
             <version>0.32.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-weaviate</artifactId>
+            <version>0.32.0</version>
+        </dependency>
+
 
 	</dependencies>
 	<repositories>
