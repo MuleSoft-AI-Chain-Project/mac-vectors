@@ -40,6 +40,8 @@ import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
+import dev.langchain4j.store.embedding.pinecone.PineconeEmbeddingStore;
+import dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig;
 import dev.langchain4j.store.embedding.weaviate.WeaviateEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -76,6 +78,7 @@ public class MuleChainVectorsOperations {
     String vectorHost;
     Integer vectorPort;
     String vectorDatabase; 
+    String vectorApiKey;
 
     String vectorUrl;
     switch (configuration.getVectorDBProviderType()) {
@@ -90,6 +93,15 @@ public class MuleChainVectorsOperations {
           store = createMilvusStore(vectorUrl, indexName, dimension);
 
         break;
+      case "PINECONE":
+        vectorType = config.getJSONObject("PINECONE");
+        vectorApiKey = vectorType.getString("PINECONE_APIKEY");
+        String vectorCloud = vectorType.getString("PINECONE_SERVERLESS_CLOUD");
+        String vectorCloudRegion = vectorType.getString("PINECONE_SERVERLESS_REGION");
+        store = createPineconeStore(vectorApiKey, vectorCloud, vectorCloudRegion, indexName, dimension);
+
+      break;
+
       case "ELASTICSEARCH":
           vectorType = config.getJSONObject("ELASTICSEARCH");
           vectorUrl = vectorType.getString("ELASTICSEARCH_URL");
@@ -111,7 +123,7 @@ public class MuleChainVectorsOperations {
           vectorType = config.getJSONObject("WEAVIATE");
           vectorHost = vectorType.getString("WEAVIATE_HOST");
           String vectorProtocol = vectorType.getString("WEAVIATE_PROTOCOL");
-          String vectorApiKey = vectorType.getString("WEAVIATE_APIKEY");
+          vectorApiKey = vectorType.getString("WEAVIATE_APIKEY");
           String weaviateIdex = indexName.substring(0, 1).toUpperCase() + indexName.substring(1);
           store = createWeaviateStore(vectorProtocol, vectorHost, vectorApiKey, weaviateIdex);
         break;
@@ -210,6 +222,19 @@ public class MuleChainVectorsOperations {
     .password(password)
     .indexName(collectionName)
     .dimension(dimension)
+    .build();
+  }
+
+  private EmbeddingStore<TextSegment> createPineconeStore(String apiKey, String cloudProvider, String cloudRegion, String collectionName, Integer dimension) {
+    return PineconeEmbeddingStore.builder()
+    .apiKey(apiKey)
+    .index(collectionName)
+    .nameSpace("ns0mc_" + collectionName)
+    .createIndex(PineconeServerlessIndexConfig.builder()
+            .cloud(cloudProvider)
+            .region(cloudRegion)
+            .dimension(dimension)
+            .build()) 
     .build();
   }
 
