@@ -13,7 +13,7 @@ public class MuleChainVectorsStoreTypeProvider implements ValueProvider {
   public Set<Value> resolve() throws ValueResolvingException {
     // TODO Auto-generated method stub
     return ValueBuilder.getValuesFor("PGVECTOR", "ELASTICSEARCH", "MILVUS", "CHROMA",
-                                     "AZURE_SEARCH", "MONGODB", "PINECONE", "WEAVIATE");
+                                     "AZURE_SEARCH", "MONGODB", "PINECONE", "WEAVIATE", "NEO4J");
   }
 
 }

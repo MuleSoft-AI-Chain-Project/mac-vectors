@@ -39,6 +39,7 @@ import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
+//import dev.langchain4j.store.embedding.neo4j.Neo4jEmbeddingStore;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import dev.langchain4j.store.embedding.pinecone.PineconeEmbeddingStore;
 import dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig;
@@ -127,7 +128,16 @@ public class MuleChainVectorsOperations {
           String weaviateIdex = indexName.substring(0, 1).toUpperCase() + indexName.substring(1);
           store = createWeaviateStore(vectorProtocol, vectorHost, vectorApiKey, weaviateIdex);
         break;
-      /*case "AZURE_OPENAI":
+
+      /*case "NEO4J":
+          vectorType = config.getJSONObject("NEO4J");
+          vectorUrl = vectorType.getString("NEO4J_BOLTURL");
+          userName = vectorType.getString("NEO4J_USER");
+          password = vectorType.getString("NEO4J_PASSWORD");
+          store = createNeo4JStore(vectorUrl, indexName, userName, password, dimension);
+        break;*/
+
+        /*case "AZURE_OPENAI":
           llmType = config.getJSONObject("AZURE_OPENAI");
           llmTypeKey = llmType.getString("AZURE_OPENAI_KEY");
           String llmEndpoint = llmType.getString("AZURE_OPENAI_ENDPOINT");
@@ -238,17 +248,26 @@ public class MuleChainVectorsOperations {
     .build();
   }
 
-  private EmbeddingStore<TextSegment> createPGVectorStore(String host, Integer port, String Database, String userName, String password, String collectionName, Integer dimension) {
+  private EmbeddingStore<TextSegment> createPGVectorStore(String host, Integer port, String database, String userName, String password, String collectionName, Integer dimension) {
     return PgVectorEmbeddingStore.builder()
       .host(host)
       .port(port)
-      .database(Database)
+      .database(database)
       .user(userName)
       .password(password)
       .table(collectionName)
       .dimension(dimension)
       .build();
   }
+
+  /*private EmbeddingStore<TextSegment> createNeo4JStore(String boltURL, String userName, String password, String collectionName, Integer dimension) {
+    return Neo4jEmbeddingStore.builder()
+      .withBasicAuth(boltURL, userName, password)
+      .dimension(dimension)
+      .databaseName(collectionName)
+      .build();
+  }*/
+
 
   private EmbeddingStore<TextSegment> createWeaviateStore(String protocol, String host, String apiKey, String collectionName) {
     return WeaviateEmbeddingStore.builder()
