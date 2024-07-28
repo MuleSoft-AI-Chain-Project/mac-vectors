@@ -14,16 +14,7 @@ public class MuleChainVectorsParameterEModelNameProvider implements ValueProvide
     "text-embedding-ada-002",
     "mistral-embed",
     "all-minilm",
-    "nomic-embed-text",
-    "mxbai-embed-large",
-    "embed-english-v3.0",
-    "embed-multilingual-v3.0",
-    "embed-english-light-v3.0",
-    "embed-multilingual-light-v3.0",
-    "embed-english-v2.0",
-    "embed-english-light-v2.0",
-    "embed-multilingual-v2.0",
-    "sentence-transformers/all-MiniLM-L6-v2"
+    "nomic-embed-text"
   );
 
   @Override

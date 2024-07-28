@@ -32,6 +32,7 @@ import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.mistralai.MistralAiEmbeddingModel;
+import dev.langchain4j.model.nomic.NomicEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -169,14 +170,13 @@ public class MuleChainVectorsOperations {
           model = createMistralAIModel(llmTypeKey, modelParams);
 
         break;
-      /*case "OLLAMA":
-
-          llmType = config.getJSONObject("OLLAMA");
-          String llmTypeUrl = llmType.getString("OLLAMA_BASE_URL");
-          model = createOllamaChatModel(llmTypeUrl, modelParams);
+      case "NOMIC":
+          llmType = config.getJSONObject("NOMIC");
+          llmTypeKey = llmType.getString("NOMIC_API_KEY");
+          model = createNomicModel(llmTypeKey, modelParams);
 
         break;
-      case "COHERE":
+      /*case "COHERE":
           llmType = config.getJSONObject("COHERE");
           llmTypeKey = llmType.getString("COHERE_API_KEY");
           model = createCohereModel(llmTypeKey, modelParams);
@@ -207,6 +207,19 @@ public class MuleChainVectorsOperations {
       .modelName(modelParams.getModelName())
       .build();
   }
+
+  private EmbeddingModel createNomicModel(String llmTypeKey, MuleChainVectorsModelParameters modelParams) {
+    return NomicEmbeddingModel.builder()
+      //.baseUrl("https://api-atlas.nomic.ai/v1/")
+      .apiKey(llmTypeKey)
+      .modelName(modelParams.getModelName())
+      //.taskType("clustering")
+      .maxRetries(2)
+      .logRequests(true)
+      .logResponses(true)
+      .build();
+  }
+
 
 
   private EmbeddingStore<TextSegment> createChromaStore(String baseUrl, String collectionName) {

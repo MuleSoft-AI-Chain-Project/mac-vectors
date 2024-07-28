@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.0.29</version>
+    <version>0.0.30</version>
     <packaging>mule-extension</packaging>
     <name>MuleChain Vectors Extension</name>
 
@@ -114,6 +114,12 @@
             <artifactId>langchain4j-mistral-ai</artifactId>
             <version>0.32.0</version>
         </dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-nomic</artifactId>
+			<version>0.32.0</version>
+		</dependency>
 
         <dependency>
             <groupId>dev.langchain4j</groupId>
