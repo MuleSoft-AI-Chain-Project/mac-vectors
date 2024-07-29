@@ -31,6 +31,8 @@ import dev.langchain4j.data.document.transformer.HtmlTextExtractor;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.mistralai.MistralAiEmbeddingModel;
+import dev.langchain4j.model.nomic.NomicEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -38,6 +40,11 @@ import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
+//import dev.langchain4j.store.embedding.neo4j.Neo4jEmbeddingStore;
+import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
+import dev.langchain4j.store.embedding.pinecone.PineconeEmbeddingStore;
+import dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig;
+import dev.langchain4j.store.embedding.weaviate.WeaviateEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
 
@@ -68,6 +75,12 @@ public class MuleChainVectorsOperations {
     EmbeddingStore<TextSegment> store = null;
     JSONObject config = readConfigFile(configuration.getConfigFilePath());
     JSONObject vectorType;
+    String userName;
+    String password;
+    String vectorHost;
+    Integer vectorPort;
+    String vectorDatabase; 
+    String vectorApiKey;
 
     String vectorUrl;
     switch (configuration.getVectorDBProviderType()) {
@@ -82,19 +95,50 @@ public class MuleChainVectorsOperations {
           store = createMilvusStore(vectorUrl, indexName, dimension);
 
         break;
+      case "PINECONE":
+        vectorType = config.getJSONObject("PINECONE");
+        vectorApiKey = vectorType.getString("PINECONE_APIKEY");
+        String vectorCloud = vectorType.getString("PINECONE_SERVERLESS_CLOUD");
+        String vectorCloudRegion = vectorType.getString("PINECONE_SERVERLESS_REGION");
+        store = createPineconeStore(vectorApiKey, vectorCloud, vectorCloudRegion, indexName, dimension);
+
+      break;
+
       case "ELASTICSEARCH":
           vectorType = config.getJSONObject("ELASTICSEARCH");
           vectorUrl = vectorType.getString("ELASTICSEARCH_URL");
-          String userName = vectorType.getString("ELASTICSEARCH_USER");
-          String password = vectorType.getString("ELASTICSEARCH_PASSWORD");
+          userName = vectorType.getString("ELASTICSEARCH_USER");
+          password = vectorType.getString("ELASTICSEARCH_PASSWORD");
           store = createElasticStore(vectorUrl, userName, password, indexName, dimension);
         break;
-      /*case "COHERE":
-          llmType = config.getJSONObject("COHERE");
-          llmTypeKey = llmType.getString("COHERE_API_KEY");
-          model = createCohereModel(llmTypeKey, modelParams);
+      case "PGVECTOR":
+          vectorType = config.getJSONObject("PGVECTOR");
+          vectorHost = vectorType.getString("POSTGRES_HOST");
+          vectorPort = vectorType.getInt("POSTGRES_PORT");
+          vectorDatabase = vectorType.getString("POSTGRES_DATABASE");
+          userName = vectorType.getString("POSTGRES_USER");
+          password = vectorType.getString("POSTGRES_PASSWORD");
+          store = createPGVectorStore(vectorHost, vectorPort, vectorDatabase, userName, password, indexName, dimension);
         break;
-      case "AZURE_OPENAI":
+
+      case "WEAVIATE":
+          vectorType = config.getJSONObject("WEAVIATE");
+          vectorHost = vectorType.getString("WEAVIATE_HOST");
+          String vectorProtocol = vectorType.getString("WEAVIATE_PROTOCOL");
+          vectorApiKey = vectorType.getString("WEAVIATE_APIKEY");
+          String weaviateIdex = indexName.substring(0, 1).toUpperCase() + indexName.substring(1);
+          store = createWeaviateStore(vectorProtocol, vectorHost, vectorApiKey, weaviateIdex);
+        break;
+
+      /*case "NEO4J":
+          vectorType = config.getJSONObject("NEO4J");
+          vectorUrl = vectorType.getString("NEO4J_BOLTURL");
+          userName = vectorType.getString("NEO4J_USER");
+          password = vectorType.getString("NEO4J_PASSWORD");
+          store = createNeo4JStore(vectorUrl, indexName, userName, password, dimension);
+        break;*/
+
+        /*case "AZURE_OPENAI":
           llmType = config.getJSONObject("AZURE_OPENAI");
           llmTypeKey = llmType.getString("AZURE_OPENAI_KEY");
           String llmEndpoint = llmType.getString("AZURE_OPENAI_ENDPOINT");
@@ -120,20 +164,19 @@ public class MuleChainVectorsOperations {
           llmTypeKey = llmType.getString("OPENAI_API_KEY");
           model = createOpenAiModel(llmTypeKey, modelParams);
         break;
-      /* case "MISTRAL_AI":
+      case "MISTRAL_AI":
           llmType = config.getJSONObject("MISTRAL_AI");
           llmTypeKey = llmType.getString("MISTRAL_AI_API_KEY");
-          model = createMistralAiModel(llmTypeKey, modelParams);
+          model = createMistralAIModel(llmTypeKey, modelParams);
 
         break;
-      case "OLLAMA":
-
-          llmType = config.getJSONObject("OLLAMA");
-          String llmTypeUrl = llmType.getString("OLLAMA_BASE_URL");
-          model = createOllamaChatModel(llmTypeUrl, modelParams);
+      case "NOMIC":
+          llmType = config.getJSONObject("NOMIC");
+          llmTypeKey = llmType.getString("NOMIC_API_KEY");
+          model = createNomicModel(llmTypeKey, modelParams);
 
         break;
-      case "COHERE":
+      /*case "COHERE":
           llmType = config.getJSONObject("COHERE");
           llmTypeKey = llmType.getString("COHERE_API_KEY");
           model = createCohereModel(llmTypeKey, modelParams);
@@ -157,6 +200,27 @@ public class MuleChainVectorsOperations {
         .modelName(modelParams.getModelName())
         .build();
     }
+
+  private EmbeddingModel createMistralAIModel(String llmTypeKey, MuleChainVectorsModelParameters modelParams) {
+    return MistralAiEmbeddingModel.builder()
+      .apiKey(llmTypeKey)
+      .modelName(modelParams.getModelName())
+      .build();
+  }
+
+  private EmbeddingModel createNomicModel(String llmTypeKey, MuleChainVectorsModelParameters modelParams) {
+    return NomicEmbeddingModel.builder()
+      //.baseUrl("https://api-atlas.nomic.ai/v1/")
+      .apiKey(llmTypeKey)
+      .modelName(modelParams.getModelName())
+      //.taskType("clustering")
+      .maxRetries(2)
+      .logRequests(true)
+      .logResponses(true)
+      .build();
+  }
+
+
 
   private EmbeddingStore<TextSegment> createChromaStore(String baseUrl, String collectionName) {
     return ChromaEmbeddingStore.builder()
@@ -182,6 +246,55 @@ public class MuleChainVectorsOperations {
     .indexName(collectionName)
     .dimension(dimension)
     .build();
+  }
+
+  private EmbeddingStore<TextSegment> createPineconeStore(String apiKey, String cloudProvider, String cloudRegion, String collectionName, Integer dimension) {
+    return PineconeEmbeddingStore.builder()
+    .apiKey(apiKey)
+    .index(collectionName)
+    .nameSpace("ns0mc_" + collectionName)
+    .createIndex(PineconeServerlessIndexConfig.builder()
+            .cloud(cloudProvider)
+            .region(cloudRegion)
+            .dimension(dimension)
+            .build()) 
+    .build();
+  }
+
+  private EmbeddingStore<TextSegment> createPGVectorStore(String host, Integer port, String database, String userName, String password, String collectionName, Integer dimension) {
+    return PgVectorEmbeddingStore.builder()
+      .host(host)
+      .port(port)
+      .database(database)
+      .user(userName)
+      .password(password)
+      .table(collectionName)
+      .dimension(dimension)
+      .build();
+  }
+
+  /*private EmbeddingStore<TextSegment> createNeo4JStore(String boltURL, String userName, String password, String collectionName, Integer dimension) {
+    return Neo4jEmbeddingStore.builder()
+      .withBasicAuth(boltURL, userName, password)
+      .dimension(dimension)
+      .databaseName(collectionName)
+      .build();
+  }*/
+
+
+  private EmbeddingStore<TextSegment> createWeaviateStore(String protocol, String host, String apiKey, String collectionName) {
+    return WeaviateEmbeddingStore.builder()
+      .scheme(protocol)
+      .host(host)
+      // "Default" class is used if not specified. Must start from an uppercase letter!
+      .objectClass(collectionName)
+      // If true (default), then WeaviateEmbeddingStore will generate a hashed ID based on provided
+      // text segment, which avoids duplicated entries in DB. If false, then random ID will be generated.
+      .avoidDups(true)
+      // Consistency level: ONE, QUORUM (default) or ALL.
+      .consistencyLevel("ALL")
+      .apiKey(apiKey)
+      .build();
   }
 
 
@@ -370,10 +483,14 @@ public class MuleChainVectorsOperations {
           switch (fileType.getFileType()) {
             case "text":
               document = loadDocument(file.toString(), new TextDocumentParser());
+              System.out.println("File: " + file.toString());
+
               ingestor.ingest(document);
               break;
             case "pdf":
               document = loadDocument(file.toString(), new ApacheTikaDocumentParser());
+              System.out.println("File: " + file.toString());
+
               ingestor.ingest(document);
               break;
             default:
@@ -401,6 +518,7 @@ public class MuleChainVectorsOperations {
 
     /**
    * Add document of type text, pdf and url to embedding store, provide the storeName (Index, Collection, etc).
+     * @throws InterruptedException 
    */
   @MediaType(value = ANY, strict = false)
   @Alias("EMBEDDING-add-document-to-store")
@@ -421,15 +539,25 @@ public class MuleChainVectorsOperations {
         .build();
 
 
+    System.out.println("file Type: " + fileType.getFileType());
+    
     Document document = null;
+    Path filePath = Paths.get(contextPath.toString()); 
+
     switch (fileType.getFileType()) {
       case "text":
-        document = loadDocument(contextPath, new TextDocumentParser());
+        document = loadDocument(filePath.toString(), new TextDocumentParser());
         ingestor.ingest(document);
+
+        System.out.println("Document contextPath: " + contextPath);
+
         break;
       case "pdf":
-        document = loadDocument(contextPath, new ApacheTikaDocumentParser());
+        document = loadDocument(filePath.toString(), new ApacheTikaDocumentParser());
         ingestor.ingest(document);
+
+        System.out.println("Document contextPath: " + contextPath);
+
         break;
       case "url":
         URL url = null;
@@ -444,17 +572,19 @@ public class MuleChainVectorsOperations {
         document = transformer.transform(htmlDocument);
         document.metadata().add("url", contextPath);
         ingestor.ingest(document);
+
         break;
       default:
         throw new IllegalArgumentException("Unsupported File Type: " + fileType.getFileType());
     }
+
+
 
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("fileType", fileType.getFileType());
     jsonObject.put("filePath", contextPath);
     jsonObject.put("storeName", storeName);
     jsonObject.put("status", "updated");
-
 
     return jsonObject.toString();
   }
