@@ -608,16 +608,22 @@ public class MuleChainVectorsOperations {
 
 
 
+
     Embedding questionEmbedding = embeddingModel.embed(question).content();
 
     List<EmbeddingMatch<TextSegment>> relevantEmbeddings = store.findRelevant(questionEmbedding, maximumResults, minScore);
 
+    //Get the size relevantEmbeddings.size()
+    //Iterate EmbeddingMatch<TextSegment> embeddingMatch = relevant.get(0);
+    //System.out.println(embeddingMatch.embedded().metadata());
+    //System.out.println(embeddingMatch.score()); // 0.8144288493114709
+    //System.out.println(embeddingMatch.embedded().text()); // I like football.
 
     String information = relevantEmbeddings.stream()
         .map(match -> match.embedded().text())
         .collect(joining("\n\n"));
 
-
+  
 
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("maxResults", maxResults);
