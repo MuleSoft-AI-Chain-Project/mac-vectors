@@ -3,7 +3,7 @@
     "id": "java",
     "attributes": {
       "type": "com.mule.mulechain.vectors.internal.MuleChainVectorsExtension",
-      "version": "0.0.30"
+      "version": "0.0.31"
     }
   },
   "name": "MuleChain Vectors",
