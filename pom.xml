@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <!-- <groupId>com.mule.mulechain</groupId> -->
-    <groupId>9c7c42b3-1b21-4ec1-9183-047ec0921663</groupId>
+    <groupId>com.mule.mulechain</groupId>
+    <!-- <groupId>9c7c42b3-1b21-4ec1-9183-047ec0921663</groupId> -->
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.0.31</version>
+    <version>0.0.39</version>
     <packaging>mule-extension</packaging>
     <name>MuleChain Vectors</name>
 

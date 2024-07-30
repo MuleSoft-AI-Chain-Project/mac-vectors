@@ -9,9 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -23,6 +25,7 @@ import static dev.langchain4j.data.document.loader.FileSystemDocumentLoader.load
 import dev.langchain4j.data.document.BlankDocumentException;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
+import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.loader.UrlDocumentLoader;
 import dev.langchain4j.data.document.parser.TextDocumentParser;
 import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
@@ -33,6 +36,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.mistralai.MistralAiEmbeddingModel;
 import dev.langchain4j.model.nomic.NomicEmbeddingModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -41,6 +45,12 @@ import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchEmbeddingStore;
 import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
 //import dev.langchain4j.store.embedding.neo4j.Neo4jEmbeddingStore;
+import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
+import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.rag.query.Query;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import dev.langchain4j.store.embedding.pinecone.PineconeEmbeddingStore;
 import dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig;
@@ -484,13 +494,17 @@ public class MuleChainVectorsOperations {
             case "text":
               document = loadDocument(file.toString(), new TextDocumentParser());
               System.out.println("File: " + file.toString());
-
+              document.metadata().add("file_type", "text");
+              document.metadata().add("file_name", document.FILE_NAME);
+              document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
               ingestor.ingest(document);
               break;
             case "pdf":
               document = loadDocument(file.toString(), new ApacheTikaDocumentParser());
               System.out.println("File: " + file.toString());
-
+              document.metadata().add("file_type", "pdf");
+              document.metadata().add("file_name", document.FILE_NAME);
+              document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
               ingestor.ingest(document);
               break;
             default:
@@ -547,6 +561,9 @@ public class MuleChainVectorsOperations {
     switch (fileType.getFileType()) {
       case "text":
         document = loadDocument(filePath.toString(), new TextDocumentParser());
+        document.metadata().add("file_type", "text");
+        document.metadata().add("file_name", document.FILE_NAME);
+        document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
         ingestor.ingest(document);
 
         System.out.println("Document contextPath: " + contextPath);
@@ -554,8 +571,10 @@ public class MuleChainVectorsOperations {
         break;
       case "pdf":
         document = loadDocument(filePath.toString(), new ApacheTikaDocumentParser());
+        document.metadata().add("file_type", "pdf");
+        document.metadata().add("file_name", document.FILE_NAME);
+        document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
         ingestor.ingest(document);
-
         System.out.println("Document contextPath: " + contextPath);
 
         break;
@@ -606,39 +625,103 @@ public class MuleChainVectorsOperations {
 
     EmbeddingStore<TextSegment> store = createStore(configuration, storeName, embeddingModel.dimension());
 
-
-
-
     Embedding questionEmbedding = embeddingModel.embed(question).content();
 
     List<EmbeddingMatch<TextSegment>> relevantEmbeddings = store.findRelevant(questionEmbedding, maximumResults, minScore);
 
-    //Get the size relevantEmbeddings.size()
-    //Iterate EmbeddingMatch<TextSegment> embeddingMatch = relevant.get(0);
-    //System.out.println(embeddingMatch.embedded().metadata());
-    //System.out.println(embeddingMatch.score()); // 0.8144288493114709
-    //System.out.println(embeddingMatch.embedded().text()); // I like football.
+
+    ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+        .embeddingStore(store)
+        .embeddingModel(embeddingModel)
+        .maxResults((Integer) maxResults)
+        .minScore(minScore)
+        .build();
 
     String information = relevantEmbeddings.stream()
         .map(match -> match.embedded().text())
         .collect(joining("\n\n"));
 
-  
 
+    
     JSONObject jsonObject = new JSONObject();
+    jsonObject.put("response", information);
+    jsonObject.put("storeName", storeName);
+    jsonObject.put("question", question);
+    JSONArray sources = new JSONArray();
+    String absoluteDirectoryPath;
+    String fileName;
+    Metadata metadata;
+    String textSegment;
+
+    JSONObject contentObject;
+
+    for (EmbeddingMatch<TextSegment> match : relevantEmbeddings) {
+      Metadata matchMetadata = match.embedded().metadata();
+
+      fileName = matchMetadata.getString("file_name");
+      absoluteDirectoryPath = matchMetadata.getString("absolute_directory_path");
+      textSegment = matchMetadata.getString("textSegment");
+
+      System.out.println("TextSegment: " + textSegment);
+      System.out.println("matchMetadata: " + matchMetadata.toString());
+      System.out.println("fileName: " + fileName);
+      System.out.println("absoluteDirectoryPath: " + absoluteDirectoryPath);
+
+      System.out.println("match.embedded() - file_type: " + match.embedded().metadata().getString("file_type"));      
+      System.out.println("match.embedded() - file_name: " + match.embedded().metadata().getString("file_name"));      
+      System.out.println("match.embedded() - absolute_directory_path: " + match.embedded().metadata().getString("absolute_directory_path"));
+      
+
+      contentObject = new JSONObject();
+      contentObject.put("absoluteDirectoryPath", absoluteDirectoryPath);
+      contentObject.put("fileName", fileName);
+      contentObject.put("textSegment", match.embedded().text());
+      sources.put(contentObject);
+    }    
+
+    jsonObject.put("sources", sources);
+
     jsonObject.put("maxResults", maxResults);
     jsonObject.put("minScore", minScore);
     jsonObject.put("question", question);
     jsonObject.put("storeName", storeName);
-    jsonObject.put("information", information);
     
 
+    
+   /*  AssistantSources assistantSources = AiServices.builder(AssistantSources.class)
+    .chatLanguageModel(OpenAiChatModel.withApiKey(""))
+    .contentRetriever(contentRetriever)
+    .build();
 
+
+    Result<String> results;
+
+    results = assistantSources.chat(question);
+    List<Content> contents = results.sources();
+
+
+    String absoluteDirectoryPath1;
+    String fileName1;
+    Metadata metadata1;
+
+    for (Content content : contents) {
+
+      metadata1 = content.textSegment().metadata();
+      absoluteDirectoryPath1 = (String) metadata1.getString("absolute_directory_path");
+      fileName1 = (String) metadata1.getString("file_name");
+
+      System.out.println("fileName1: " + fileName1);
+      System.out.println("absoluteDirectoryPath1: " + absoluteDirectoryPath1);
+      System.out.println("metadata1: " + metadata1.toString());
+    }*/
     
     return jsonObject.toString();
   }
 
+  interface AssistantSources {
 
+    Result<String> chat(String userMessage);
+  }
 
   
 }
