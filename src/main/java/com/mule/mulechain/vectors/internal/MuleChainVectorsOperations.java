@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+import java.io.File;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -495,16 +496,18 @@ public class MuleChainVectorsOperations {
               document = loadDocument(file.toString(), new TextDocumentParser());
               System.out.println("File: " + file.toString());
               document.metadata().add("file_type", "text");
-              document.metadata().add("file_name", document.FILE_NAME);
-              document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
+              document.metadata().add("file_name", file.getFileName());
+              document.metadata().add("full_path", folderPath + file.getFileName());
+              document.metadata().add("absolute_path", folderPath);
               ingestor.ingest(document);
               break;
             case "pdf":
               document = loadDocument(file.toString(), new ApacheTikaDocumentParser());
               System.out.println("File: " + file.toString());
-              document.metadata().add("file_type", "pdf");
-              document.metadata().add("file_name", document.FILE_NAME);
-              document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
+              document.metadata().add("file_type", "text");
+              document.metadata().add("file_name", file.getFileName());
+              document.metadata().add("full_path", folderPath + file.getFileName());
+              document.metadata().add("absolute_path", folderPath);
               ingestor.ingest(document);
               break;
             default:
@@ -557,25 +560,26 @@ public class MuleChainVectorsOperations {
     
     Document document = null;
     Path filePath = Paths.get(contextPath.toString()); 
+    String fileName = getFileNameFromPath(contextPath);
 
     switch (fileType.getFileType()) {
       case "text":
         document = loadDocument(filePath.toString(), new TextDocumentParser());
         document.metadata().add("file_type", "text");
-        document.metadata().add("file_name", document.FILE_NAME);
+        document.metadata().add("file_name", fileName);
+        document.metadata().add("full_path", contextPath);
         document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
         ingestor.ingest(document);
 
-        System.out.println("Document contextPath: " + contextPath);
 
         break;
       case "pdf":
         document = loadDocument(filePath.toString(), new ApacheTikaDocumentParser());
-        document.metadata().add("file_type", "pdf");
-        document.metadata().add("file_name", document.FILE_NAME);
+        document.metadata().add("file_type", "text");
+        document.metadata().add("file_name", fileName);
+        document.metadata().add("full_path", contextPath);
         document.metadata().add("absolute_path", document.ABSOLUTE_DIRECTORY_PATH);
         ingestor.ingest(document);
-        System.out.println("Document contextPath: " + contextPath);
 
         break;
       case "url":
@@ -608,6 +612,14 @@ public class MuleChainVectorsOperations {
     return jsonObject.toString();
   }
 
+
+  private String getFileNameFromPath(String fullPath) {
+
+      File file = new File(fullPath);
+      return file.getName();
+  }
+
+
   /**
    * Query information from embedding store , provide the storeName (Index, Collections, etc.)
    */
@@ -630,13 +642,6 @@ public class MuleChainVectorsOperations {
     List<EmbeddingMatch<TextSegment>> relevantEmbeddings = store.findRelevant(questionEmbedding, maximumResults, minScore);
 
 
-    ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
-        .embeddingStore(store)
-        .embeddingModel(embeddingModel)
-        .maxResults((Integer) maxResults)
-        .minScore(minScore)
-        .build();
-
     String information = relevantEmbeddings.stream()
         .map(match -> match.embedded().text())
         .collect(joining("\n\n"));
@@ -650,31 +655,22 @@ public class MuleChainVectorsOperations {
     JSONArray sources = new JSONArray();
     String absoluteDirectoryPath;
     String fileName;
-    Metadata metadata;
     String textSegment;
 
     JSONObject contentObject;
-
+    String fullPath;
     for (EmbeddingMatch<TextSegment> match : relevantEmbeddings) {
       Metadata matchMetadata = match.embedded().metadata();
 
       fileName = matchMetadata.getString("file_name");
+      fullPath = matchMetadata.getString("full_path");
       absoluteDirectoryPath = matchMetadata.getString("absolute_directory_path");
       textSegment = matchMetadata.getString("textSegment");
 
-      System.out.println("TextSegment: " + textSegment);
-      System.out.println("matchMetadata: " + matchMetadata.toString());
-      System.out.println("fileName: " + fileName);
-      System.out.println("absoluteDirectoryPath: " + absoluteDirectoryPath);
-
-      System.out.println("match.embedded() - file_type: " + match.embedded().metadata().getString("file_type"));      
-      System.out.println("match.embedded() - file_name: " + match.embedded().metadata().getString("file_name"));      
-      System.out.println("match.embedded() - absolute_directory_path: " + match.embedded().metadata().getString("absolute_directory_path"));
-      
-
       contentObject = new JSONObject();
       contentObject.put("absoluteDirectoryPath", absoluteDirectoryPath);
-      contentObject.put("fileName", fileName);
+      contentObject.put("full_path", fullPath);
+      contentObject.put("file_name", fileName);
       contentObject.put("textSegment", match.embedded().text());
       sources.put(contentObject);
     }    
@@ -687,34 +683,6 @@ public class MuleChainVectorsOperations {
     jsonObject.put("storeName", storeName);
     
 
-    
-   /*  AssistantSources assistantSources = AiServices.builder(AssistantSources.class)
-    .chatLanguageModel(OpenAiChatModel.withApiKey(""))
-    .contentRetriever(contentRetriever)
-    .build();
-
-
-    Result<String> results;
-
-    results = assistantSources.chat(question);
-    List<Content> contents = results.sources();
-
-
-    String absoluteDirectoryPath1;
-    String fileName1;
-    Metadata metadata1;
-
-    for (Content content : contents) {
-
-      metadata1 = content.textSegment().metadata();
-      absoluteDirectoryPath1 = (String) metadata1.getString("absolute_directory_path");
-      fileName1 = (String) metadata1.getString("file_name");
-
-      System.out.println("fileName1: " + fileName1);
-      System.out.println("absoluteDirectoryPath1: " + absoluteDirectoryPath1);
-      System.out.println("metadata1: " + metadata1.toString());
-    }*/
-    
     return jsonObject.toString();
   }
 
