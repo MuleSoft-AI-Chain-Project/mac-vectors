@@ -21,5 +21,5 @@ To use this connector, add the following dependency to your application's `pom.x
 
 # Documentation 
 - Check out the complete documentation on mulechain.ai.
-- Learn from the getting started playlist: https://www.youtube.com/watch?v=NA_ny8KGaQA&list=PLnuJGpEBF6ZAV1JfID1SRKN6OmGORvgv6
+- Learn from the getting started playlist: 
 - Subscribe to our YouTube Channel: https://www.youtube.com/@MuleChainProject
