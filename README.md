@@ -1,17 +1,16 @@
 # MuleChain Vectors Extension
+MuleChain Vectors provides connectivity to Vector Databases / Stores and extends the AI Play for MuleChain's AI Connectors. 
 
-Add description ...
+## Requirements
 
+- The maximum supported version for Java SDK is JDK 17. You can use JDK 17 only for running your application.
+- Compilation with Java SDK must be done with JDK 8.
 
-...
+## Installation
 
+To use this connector, add the following dependency to your application's `pom.xml`:
 
-...
-
-
-Add this dependency to your application pom.xml
-
-```
+```xml
 <dependency>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
@@ -19,3 +18,8 @@ Add this dependency to your application pom.xml
     <classifier>mule-plugin</classifier>
 </dependency>
 ```
+
+# Documentation 
+- Check out the complete documentation on mulechain.ai.
+- Learn from the getting started playlist: https://www.youtube.com/watch?v=NA_ny8KGaQA&list=PLnuJGpEBF6ZAV1JfID1SRKN6OmGORvgv6
+- Subscribe to our YouTube Channel: https://www.youtube.com/@MuleChainProject
