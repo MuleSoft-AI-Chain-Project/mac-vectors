@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.0.30</version>
+    <version>0.1.0</version>
     <packaging>mule-extension</packaging>
-    <name>MuleChain Vectors Extension</name>
+    <name>MuleChain Vectors</name>
 
     <parent>
         <groupId>org.mule.extensions</groupId>
@@ -187,13 +187,13 @@
 		<snapshotRepository>
 			<id>exchange-repository</id>
 			<name>Exchange Repository</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v1/organizations/aa7af6ad-839e-4607-a6f8-986e4e8166a4/maven</url>
+			<url>https://maven.anypoint.mulesoft.com/api/v1/organizations/9c7c42b3-1b21-4ec1-9183-047ec0921663/maven</url>
 			<layout>default</layout>
 		</snapshotRepository>
 		<repository>
 			<id>exchange-repository</id>
 			<name>Exchange Repository</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v1/organizations/aa7af6ad-839e-4607-a6f8-986e4e8166a4/maven</url>
+			<url>https://maven.anypoint.mulesoft.com/api/v1/organizations/9c7c42b3-1b21-4ec1-9183-047ec0921663/maven</url>
 			<layout>default</layout>
 		</repository>
 	</distributionManagement>
