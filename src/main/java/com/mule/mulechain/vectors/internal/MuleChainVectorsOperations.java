@@ -140,22 +140,6 @@ public class MuleChainVectorsOperations {
           String weaviateIdex = indexName.substring(0, 1).toUpperCase() + indexName.substring(1);
           store = createWeaviateStore(vectorProtocol, vectorHost, vectorApiKey, weaviateIdex);
         break;
-
-      /*case "NEO4J":
-          vectorType = config.getJSONObject("NEO4J");
-          vectorUrl = vectorType.getString("NEO4J_BOLTURL");
-          userName = vectorType.getString("NEO4J_USER");
-          password = vectorType.getString("NEO4J_PASSWORD");
-          store = createNeo4JStore(vectorUrl, indexName, userName, password, dimension);
-        break;*/
-
-        /*case "AZURE_OPENAI":
-          llmType = config.getJSONObject("AZURE_OPENAI");
-          llmTypeKey = llmType.getString("AZURE_OPENAI_KEY");
-          String llmEndpoint = llmType.getString("AZURE_OPENAI_ENDPOINT");
-          String llmDeploymentName = llmType.getString("AZURE_OPENAI_DEPLOYMENT_NAME");
-          model = createAzureOpenAiModel(llmTypeKey, llmEndpoint, llmDeploymentName, modelParams);
-        break; */
       default:
         throw new IllegalArgumentException("Unsupported VectorDB type: " + configuration.getEmbeddingProviderType());
     }
@@ -187,18 +171,6 @@ public class MuleChainVectorsOperations {
           model = createNomicModel(llmTypeKey, modelParams);
 
         break;
-      /*case "COHERE":
-          llmType = config.getJSONObject("COHERE");
-          llmTypeKey = llmType.getString("COHERE_API_KEY");
-          model = createCohereModel(llmTypeKey, modelParams);
-        break;
-      case "AZURE_OPENAI":
-          llmType = config.getJSONObject("AZURE_OPENAI");
-          llmTypeKey = llmType.getString("AZURE_OPENAI_KEY");
-          String llmEndpoint = llmType.getString("AZURE_OPENAI_ENDPOINT");
-          String llmDeploymentName = llmType.getString("AZURE_OPENAI_DEPLOYMENT_NAME");
-          model = createAzureOpenAiModel(llmTypeKey, llmEndpoint, llmDeploymentName, modelParams);
-        break; */
       default:
         throw new IllegalArgumentException("Unsupported Embedding Model: " + configuration.getEmbeddingProviderType());
     }
@@ -378,7 +350,7 @@ public class MuleChainVectorsOperations {
         splitter = DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars);
         segments = splitter.split(document);
         break;
-      case "pdf":
+      case "any":
         document = loadDocument(contextPath, new ApacheTikaDocumentParser());
         splitter = DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars);
         segments = splitter.split(document);
@@ -423,7 +395,7 @@ public class MuleChainVectorsOperations {
       case "text":
         document = loadDocument(contextPath, new TextDocumentParser());
        break;
-      case "pdf":
+      case "any":
         document = loadDocument(contextPath, new ApacheTikaDocumentParser());
         break;
       case "url":
@@ -501,7 +473,7 @@ public class MuleChainVectorsOperations {
               document.metadata().add("absolute_path", folderPath);
               ingestor.ingest(document);
               break;
-            case "pdf":
+            case "any":
               document = loadDocument(file.toString(), new ApacheTikaDocumentParser());
               System.out.println("File: " + file.toString());
               document.metadata().add("file_type", "text");
@@ -573,7 +545,7 @@ public class MuleChainVectorsOperations {
 
 
         break;
-      case "pdf":
+      case "any":
         document = loadDocument(filePath.toString(), new ApacheTikaDocumentParser());
         document.metadata().add("file_type", "text");
         document.metadata().add("file_name", fileName);
@@ -671,6 +643,8 @@ public class MuleChainVectorsOperations {
       contentObject.put("absoluteDirectoryPath", absoluteDirectoryPath);
       contentObject.put("full_path", fullPath);
       contentObject.put("file_name", fileName);
+      contentObject.put("individualScore", match.score());
+      
       contentObject.put("textSegment", match.embedded().text());
       sources.put(contentObject);
     }    
@@ -678,7 +652,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("sources", sources);
 
     jsonObject.put("maxResults", maxResults);
-    jsonObject.put("minScore", minScore);
+    jsonObject.put("minimumScore", minScore);
     jsonObject.put("question", question);
     jsonObject.put("storeName", storeName);
     

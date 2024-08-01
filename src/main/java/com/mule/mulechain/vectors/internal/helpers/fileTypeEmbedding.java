@@ -13,7 +13,7 @@ public class fileTypeEmbedding implements ValueProvider {
   @Override
   public Set<Value> resolve() throws ValueResolvingException {
     // TODO Auto-generated method stub
-    return ValueBuilder.getValuesFor("pdf", "text", "url");
+    return ValueBuilder.getValuesFor("any", "text", "url");
   }
 
 }
