@@ -376,7 +376,7 @@ public class MuleChainVectorsOperations {
                                   
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("contextPath", contextPath);
-    jsonObject.put("fileType", fileType);
+    jsonObject.put("fileType", fileType.getFileType());
     jsonObject.put("segments", segments.toString());
     
     return jsonObject.toString();
