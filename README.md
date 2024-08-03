@@ -20,6 +20,6 @@ To use this connector, add the following dependency to your application's `pom.x
 ```
 
 # Documentation 
-- Check out the complete documentation on mulechain.ai.
-- Learn from the getting started playlist: 
-- Subscribe to our YouTube Channel: https://www.youtube.com/@MuleChainProject
+- Check out the complete [documentation](https://mulechain.ai/docs/mulechain-vectors/connector-overview).
+- Learn from the [getting started playlist](https://www.youtube.com/watch?v=YNsiLOIg_Vs&list=PLnuJGpEBF6ZBncyBbgYW46rbvYJwpl9Wj) 
+- Subscribe to our [YouTube Channel](https://www.youtube.com/@MuleChainProject)
