@@ -1,15 +1,15 @@
 {
-  "name": "MuleChain Vectors",
+  "name": "MAC Vectors",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
   "version": "0.1.1",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
-    "prefix": "mulechain-vectors",
-    "namespace": "http://www.mulesoft.org/schema/mule/mulechain-vectors",
-    "schemaLocation": "http://www.mulesoft.org/schema/mule/mulechain-vectors/current/mule-mulechain-vectors.xsd",
+    "prefix": "vectors",
+    "namespace": "http://www.mulesoft.org/schema/mule/vectors",
+    "schemaLocation": "http://www.mulesoft.org/schema/mule/vectors/current/mule-vectors.xsd",
     "schemaVersion": "0.1.1",
-    "xsdFileName": "mule-mulechain-vectors.xsd"
+    "xsdFileName": "mule-vectors.xsd"
   },
   "resources": [],
   "subTypes": [],
@@ -21,7 +21,7 @@
     {
       "stereotype": {
         "type": "CONFIG",
-        "namespace": "MULECHAIN-VECTORS",
+        "namespace": "VECTORS",
         "parent": {
           "type": "MODULE_CONFIG",
           "namespace": "MULE"
@@ -2429,7 +2429,7 @@
   "notifications": [],
   "errors": [
     {
-      "error": "MULECHAIN-VECTORS:RETRY_EXHAUSTED",
+      "error": "VECTORS:RETRY_EXHAUSTED",
       "parent": "MULE:RETRY_EXHAUSTED",
       "handleable": true
     },
@@ -2443,7 +2443,7 @@
       "handleable": true
     },
     {
-      "error": "MULECHAIN-VECTORS:CONNECTIVITY",
+      "error": "VECTORS:CONNECTIVITY",
       "parent": "MULE:CONNECTIVITY",
       "handleable": true
     },
