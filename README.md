@@ -1,12 +1,20 @@
-# MuleChain Vectors Extension
-MuleChain Vectors provides connectivity to Vector Databases / Stores and extends the AI Play for MuleChain's AI Connectors. 
+# MAC Vectors
 
-## Requirements
+
+## <img src="icon/icon.svg" width="6%" alt="banner">   [MuleSoft AI Chain Vectors Connector](https://mac-project.ai/docs/mulechain-vectors)
+
+
+### MuleChain Vectors Extension
+
+MAC Vectors provides access to a broad number of external Vector Stores and Databases. It is built to be leveraged by the MAC Projects AI Connectors.
+
+
+### Requirements
 
 - The maximum supported version for Java SDK is JDK 17. You can use JDK 17 only for running your application.
 - Compilation with Java SDK must be done with JDK 8.
 
-## Installation
+### Installation
 
 To use this connector, add the following dependency to your application's `pom.xml`:
 
@@ -19,7 +27,14 @@ To use this connector, add the following dependency to your application's `pom.x
 </dependency>
 ```
 
-# Documentation 
-- Check out the complete [documentation](https://mulechain.ai/docs/mulechain-vectors/connector-overview).
-- Learn from the [getting started playlist](https://www.youtube.com/watch?v=YNsiLOIg_Vs&list=PLnuJGpEBF6ZBncyBbgYW46rbvYJwpl9Wj) 
-- Subscribe to our [YouTube Channel](https://www.youtube.com/@MuleChainProject)
+### Documentation 
+- Check out the complete documentation in [mac-project.ai](https://mac-project.ai/docs/mulechain-vectors)
+- Learn from the [Getting Started YouTube Playlist](https://www.youtube.com/playlist?list=PLnuJGpEBF6ZAV1JfID1SRKN6OmGORvgv6)
+
+---
+
+### Stay tuned!
+
+- 🌐 **Website**: [mac-project.ai](https://mac-project.ai)
+- 📺 **YouTube**: [@MuleSoft-MAC-Project](https://www.youtube.com/@MuleSoft-MAC-Project)
+- 💼 **LinkedIn**: [MAC Project Group](https://lnkd.in/gW3eZrbF)
