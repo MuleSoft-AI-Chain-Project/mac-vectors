@@ -1,14 +1,14 @@
 {
   "name": "MAC Vectors",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
-  "version": "0.1.1",
+  "version": "0.1.25",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "vectors",
     "namespace": "http://www.mulesoft.org/schema/mule/vectors",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/vectors/current/mule-vectors.xsd",
-    "schemaVersion": "0.1.1",
+    "schemaVersion": "0.1.25",
     "xsdFileName": "mule-vectors.xsd"
   },
   "resources": [],
@@ -260,8 +260,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -278,7 +294,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -341,6 +357,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 3,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 4,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -385,7 +615,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 3
+                    "order": 5
                   },
                   "allowedStereotypeModels": [],
                   "name": "fileType",
@@ -426,7 +656,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 4,
+                    "order": 6,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -457,7 +687,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 5,
+                    "order": 7,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -492,8 +722,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -510,7 +756,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -655,6 +901,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 5,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 6,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -699,7 +1159,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 5
+                    "order": 7
                   },
                   "allowedStereotypeModels": [],
                   "name": "fileType",
@@ -740,7 +1200,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 6,
+                    "order": 8,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -771,7 +1231,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 7,
+                    "order": 9,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -806,8 +1266,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -824,7 +1300,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -995,6 +1471,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 6,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 7,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -1039,7 +1729,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 6
+                    "order": 8
                   },
                   "allowedStereotypeModels": [],
                   "name": "fileType",
@@ -1089,7 +1779,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 7
+                    "order": 9
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -1130,7 +1820,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 8,
+                    "order": 10,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1161,7 +1851,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 9,
+                    "order": 11,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1196,8 +1886,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -1214,7 +1920,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -1387,6 +2093,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 6,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 7,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -1431,7 +2351,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 6
+                    "order": 8
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -1472,7 +2392,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 7,
+                    "order": 9,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1503,7 +2423,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 8,
+                    "order": 10,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1538,8 +2458,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -1556,7 +2492,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -1727,6 +2663,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 6,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 7,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -1771,7 +2921,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 6
+                    "order": 8
                   },
                   "allowedStereotypeModels": [],
                   "name": "fileType",
@@ -1821,7 +2971,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 7
+                    "order": 9
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -1862,7 +3012,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 8,
+                    "order": 10,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1893,7 +3043,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 9,
+                    "order": 11,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1928,8 +3078,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -1946,7 +3112,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -2035,6 +3201,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 4,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 5,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -2079,7 +3459,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 4
+                    "order": 6
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -2120,7 +3500,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 5,
+                    "order": 7,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -2151,7 +3531,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 6,
+                    "order": 8,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -2186,8 +3566,24 @@
           "executionType": "CPU_LITE",
           "output": {
             "type": {
-              "format": "java",
-              "type": "String"
+              "format": "json",
+              "type": "Binary",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.io.InputStream",
+                  "hasDefaultConstructor": true,
+                  "isInterface": false,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [
+                    "java.io.Closeable"
+                  ],
+                  "parent": "",
+                  "genericTypes": [],
+                  "isMap": false
+                }
+              }
             },
             "hasDynamicType": false,
             "description": "",
@@ -2204,7 +3600,7 @@
           },
           "transactional": false,
           "requiresConnection": false,
-          "supportsStreaming": false,
+          "supportsStreaming": true,
           "notifications": [],
           "nestedComponents": [],
           "errors": [],
@@ -2267,6 +3663,220 @@
                   "name": "outputMimeType",
                   "description": "The mime type of the payload that this operation outputs.",
                   "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 3,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "outputEncoding",
+                  "description": "The encoding of the payload that this operation outputs.",
+                  "modelProperties": {}
+                },
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "Union",
+                    "annotations": {
+                      "typeId": "ByteStreamingStrategy"
+                    },
+                    "of": [
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-in-memory-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "initialBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the amount of memory that will be allocated in order to consume the stream and provide random access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferSizeIncrement"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised when the buffer gets full."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "maxBufferSize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "1024"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. A value lower or equal to zero means no limit."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which all these attributes are expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "repeatable-file-store-stream"
+                        },
+                        "fields": [
+                          {
+                            "key": {
+                              "name": "inMemorySize"
+                            },
+                            "model": {
+                              "type": "Number",
+                              "annotations": {
+                                "int": {},
+                                "default": "512"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then it will start to buffer the content on disk."
+                              }
+                            }
+                          },
+                          {
+                            "key": {
+                              "name": "bufferUnit"
+                            },
+                            "model": {
+                              "type": "String",
+                              "annotations": {
+                                "enum": {
+                                  "type": "[Ljava.lang.String;",
+                                  "values": [
+                                    "BYTE",
+                                    "KB",
+                                    "MB",
+                                    "GB"
+                                  ]
+                                },
+                                "default": "KB"
+                              }
+                            },
+                            "annotations": {
+                              "description": {
+                                "value": "The unit in which maxInMemorySize is expressed"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Object",
+                        "annotations": {
+                          "typeId": "non-repeatable-stream",
+                          "description": {
+                            "value": "This configuration allows the input stream to be read only once. It will not allow to seek randomly which will limit the transformations that DW can perform on this stream. Use this option for use cases which just require moving data around from one system to another to get optimum performance."
+                          }
+                        },
+                        "fields": []
+                      }
+                    ]
+                  },
+                  "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "expressionSupport": "NOT_SUPPORTED",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": false,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 4,
+                    "tabName": "Advanced"
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "streamingStrategy",
+                  "description": "Configure if repeatable streams should be used and their behaviour",
+                  "modelProperties": {
+                    "org.mule.runtime.extension.api.property.QNameModelProperty": {
+                      "value": {
+                        "namespaceURI": "http://www.mulesoft.org/schema/mule/core",
+                        "localPart": "abstract-byte-streaming-strategy",
+                        "prefix": "mule"
+                      }
+                    },
+                    "org.mule.runtime.extension.api.property.InfrastructureParameterModelProperty": {
+                      "sequence": 2
+                    }
+                  }
                 }
               ],
               "exclusiveParametersModels": [],
@@ -2311,7 +3921,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 3
+                    "order": 5
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -2352,7 +3962,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 4,
+                    "order": 6,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -2383,7 +3993,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 5,
+                    "order": 7,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],

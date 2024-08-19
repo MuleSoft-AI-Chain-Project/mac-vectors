@@ -1,8 +1,11 @@
 package com.mule.mulechain.vectors.internal;
 
 import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
+import static org.apache.commons.io.IOUtils.toInputStream;
+import static org.mule.runtime.extension.api.annotation.param.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -11,8 +14,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntPredicate;
 import java.util.stream.Stream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -285,9 +290,9 @@ public class MuleChainVectorsOperations {
   /**
    * Adds Text to Embedding Store
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("Embedding-add-text-to-store")
-  public String addTextToStore(String storeName, String textToAdd,@Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+  public InputStream addTextToStore(String storeName, String textToAdd,@Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
@@ -303,16 +308,16 @@ public class MuleChainVectorsOperations {
     jsonObject.put("textEmbedding", textEmbedding.toString());
     jsonObject.put("storeName", storeName);
 
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
   }
 
 
    /**
    * Adds Text to Embedding Store
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("Embedding-generate-from-text")
-  public String generateEmbedding(String textToAdd, @Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
+  public InputStream generateEmbedding(String textToAdd, @Config MuleChainVectorsConfiguration configuration,  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
 
     EmbeddingModel embeddingModel = createModel(configuration, modelParams);
 
@@ -325,7 +330,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("Dimension", textEmbedding.dimension());
 
 
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
   }
 
 
@@ -333,9 +338,9 @@ public class MuleChainVectorsOperations {
   /**
    * Splits a document provided by full path in to a defined set of chucks and overlaps
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("Document-split-into-chunks")
-  public String documentSplitter(String contextPath, @Config MuleChainVectorsConfiguration configuration,
+  public InputStream documentSplitter(String contextPath, @Config MuleChainVectorsConfiguration configuration,
                                 @ParameterGroup(name = "Context") fileTypeParameters fileType, 
                                 int maxSegmentSizeInChars, int maxOverlapSizeInChars){
 
@@ -379,15 +384,15 @@ public class MuleChainVectorsOperations {
     jsonObject.put("fileType", fileType.getFileType());
     jsonObject.put("segments", segments.toString());
     
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
   }
 
    /**
    * Parses a document by filepath and returns the text
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("Document-parser")
-  public String documentParser(String contextPath, @Config MuleChainVectorsConfiguration configuration,
+  public InputStream documentParser(String contextPath, @Config MuleChainVectorsConfiguration configuration,
                               @ParameterGroup(name = "Context") fileTypeParameters fileType){
 
     Document document = null;
@@ -423,16 +428,16 @@ public class MuleChainVectorsOperations {
     jsonObject.put("metadata",document.metadata());
 
 
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
 }
 
 
   /**
    * Loads multiple files from a folder into the embedding store. URLs are not supported with this operation.
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("Embedding-add-folder-to-store")
-  public String addFolderToStore(String storeName, String folderPath, @Config MuleChainVectorsConfiguration configuration,
+  public InputStream addFolderToStore(String storeName, String folderPath, @Config MuleChainVectorsConfiguration configuration,
                                 @ParameterGroup(name = "Context") fileTypeParameters fileType, 
                                 int maxSegmentSizeInChars, int maxOverlapSizeInChars,
                                 @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
@@ -500,7 +505,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("status", "updated");
 
 
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
   }
 
 
@@ -509,9 +514,9 @@ public class MuleChainVectorsOperations {
    * Add document of type text, pdf and url to embedding store, provide the storeName (Index, Collection, etc).
      * @throws InterruptedException 
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("EMBEDDING-add-document-to-store")
-  public String addFileEmbedding(String storeName, String contextPath, @Config MuleChainVectorsConfiguration configuration,
+  public InputStream addFileEmbedding(String storeName, String contextPath, @Config MuleChainVectorsConfiguration configuration,
                                  @ParameterGroup(name = "Context") fileTypeParameters fileType, 
                                  int maxSegmentSizeInChars, int maxOverlapSizeInChars,
                                  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams) {
@@ -581,7 +586,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("storeName", storeName);
     jsonObject.put("status", "updated");
 
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
   }
 
 
@@ -595,9 +600,9 @@ public class MuleChainVectorsOperations {
   /**
    * Query information from embedding store , provide the storeName (Index, Collections, etc.)
    */
-  @MediaType(value = ANY, strict = false)
+  @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("EMBEDDING-query-from-store")
-  public String queryFromEmbedding(String storeName, String question, Number maxResults, Double minScore, 
+  public InputStream queryFromEmbedding(String storeName, String question, Number maxResults, Double minScore, 
                                   @Config MuleChainVectorsConfiguration configuration,
                                   @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams) {
     int maximumResults = (int) maxResults;
@@ -627,6 +632,7 @@ public class MuleChainVectorsOperations {
     JSONArray sources = new JSONArray();
     String absoluteDirectoryPath;
     String fileName;
+    String url;
     String textSegment;
 
     JSONObject contentObject;
@@ -635,6 +641,7 @@ public class MuleChainVectorsOperations {
       Metadata matchMetadata = match.embedded().metadata();
 
       fileName = matchMetadata.getString("file_name");
+      url = matchMetadata.getString("url");
       fullPath = matchMetadata.getString("full_path");
       absoluteDirectoryPath = matchMetadata.getString("absolute_directory_path");
       textSegment = matchMetadata.getString("textSegment");
@@ -643,6 +650,7 @@ public class MuleChainVectorsOperations {
       contentObject.put("absoluteDirectoryPath", absoluteDirectoryPath);
       contentObject.put("full_path", fullPath);
       contentObject.put("file_name", fileName);
+      contentObject.put("url", url);
       contentObject.put("individualScore", match.score());
       
       contentObject.put("textSegment", match.embedded().text());
@@ -657,7 +665,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("storeName", storeName);
     
 
-    return jsonObject.toString();
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
   }
 
   interface AssistantSources {
