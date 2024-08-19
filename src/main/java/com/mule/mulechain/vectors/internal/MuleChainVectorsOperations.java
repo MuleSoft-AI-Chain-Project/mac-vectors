@@ -536,11 +536,13 @@ public class MuleChainVectorsOperations {
     System.out.println("file Type: " + fileType.getFileType());
     
     Document document = null;
-    Path filePath = Paths.get(contextPath.toString()); 
-    String fileName = getFileNameFromPath(contextPath);
+    Path filePath; 
+    String fileName;
 
     switch (fileType.getFileType()) {
       case "text":
+        filePath = Paths.get(contextPath.toString()); 
+        fileName = getFileNameFromPath(contextPath);
         document = loadDocument(filePath.toString(), new TextDocumentParser());
         document.metadata().add("file_type", "text");
         document.metadata().add("file_name", fileName);
@@ -551,6 +553,8 @@ public class MuleChainVectorsOperations {
 
         break;
       case "any":
+        filePath = Paths.get(contextPath.toString()); 
+        fileName = getFileNameFromPath(contextPath);
         document = loadDocument(filePath.toString(), new ApacheTikaDocumentParser());
         document.metadata().add("file_type", "text");
         document.metadata().add("file_name", fileName);
