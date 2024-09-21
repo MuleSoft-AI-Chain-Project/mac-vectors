@@ -9,12 +9,14 @@ import org.mule.runtime.extension.api.values.ValueResolvingException;
 public class MuleChainVectorsParameterEModelNameProvider implements ValueProvider {
 
   private static final Set<Value> VALUES_FOR = ValueBuilder.getValuesFor(
-    "text-embedding-3-small",
-    "text-embedding-3-large",
-    "text-embedding-ada-002",
-    "mistral-embed",
-    "all-minilm",
-    "nomic-embed-text"
+          "text-embedding-3-small",
+          "text-embedding-3-large",
+          "text-embedding-ada-002",
+          "mistral-embed",
+          "all-minilm",
+          "nomic-embed-text",
+          "tiiuae/falcon-7b-instruct",
+          "sentence-transformers/all-MiniLM-L6-v2"
   );
 
   @Override
