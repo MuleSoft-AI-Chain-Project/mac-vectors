@@ -11,7 +11,6 @@ public class MuleChainVectorsModelParameters {
   @Parameter
   @Expression(ExpressionSupport.SUPPORTED)
   @OfValues(MuleChainVectorsParameterEModelNameProvider.class)
-  @Optional(defaultValue = "text-embedding-ada-002")
   private String modelName;
 
   public String getModelName() {
