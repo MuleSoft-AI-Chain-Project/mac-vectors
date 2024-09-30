@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
+import dev.langchain4j.model.huggingface.HuggingFaceEmbeddingModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -176,6 +177,12 @@ public class MuleChainVectorsOperations {
           model = createNomicModel(llmTypeKey, modelParams);
 
         break;
+      case "HUGGING_FACE":
+        llmType = config.getJSONObject("HUGGING_FACE");
+        llmTypeKey = llmType.getString("HUGGING_FACE_API_KEY");
+        model = createHuggingFaceModel(llmTypeKey, modelParams);
+
+        break;
       default:
         throw new IllegalArgumentException("Unsupported Embedding Model: " + configuration.getEmbeddingProviderType());
     }
@@ -206,6 +213,13 @@ public class MuleChainVectorsOperations {
       .logRequests(true)
       .logResponses(true)
       .build();
+  }
+
+  private EmbeddingModel createHuggingFaceModel(String llmTypeKey, MuleChainVectorsModelParameters modelParams) {
+    return HuggingFaceEmbeddingModel.builder()
+            .accessToken(llmTypeKey)
+            .modelId(modelParams.getModelName())
+            .build();
   }
 
 
@@ -564,6 +578,8 @@ public class MuleChainVectorsOperations {
 
         break;
       case "url":
+        System.out.println("Context Path: " + contextPath);
+
         URL url = null;
         try {
           url = new URL(contextPath);
