@@ -1,14 +1,14 @@
 {
   "name": "MAC Vectors",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
-  "version": "0.1.26",
+  "version": "0.1.30",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "vectors",
     "namespace": "http://www.mulesoft.org/schema/mule/vectors",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/vectors/current/mule-vectors.xsd",
-    "schemaVersion": "0.1.26",
+    "schemaVersion": "0.1.30",
     "xsdFileName": "mule-vectors.xsd"
   },
   "resources": [],
@@ -155,7 +155,9 @@
                           "isAbstract": false,
                           "isFinal": true,
                           "implementedInterfaces": [
-                            "java.lang.Comparable"
+                            "java.lang.Comparable",
+                            "java.lang.constant.Constable",
+                            "java.lang.constant.ConstantDesc"
                           ],
                           "parent": "java.lang.Number",
                           "genericTypes": [],
@@ -1757,18 +1759,17 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
-                  "required": false,
+                  "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
                     "actingParameters": [],
                     "partOrder": 1,
                     "providerName": "modelName",
-                    "requiresConfiguration": false,
+                    "requiresConfiguration": true,
                     "requiresConnection": false,
                     "isOpen": true
                   },
                   "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
                     "allowsInlineDefinition": true,
@@ -2038,7 +2039,9 @@
                         "isAbstract": false,
                         "isFinal": true,
                         "implementedInterfaces": [
-                          "java.lang.Comparable"
+                          "java.lang.Comparable",
+                          "java.lang.constant.Constable",
+                          "java.lang.constant.ConstantDesc"
                         ],
                         "parent": "java.lang.Number",
                         "genericTypes": [],
@@ -2329,18 +2332,17 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
-                  "required": false,
+                  "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
                     "actingParameters": [],
                     "partOrder": 1,
                     "providerName": "modelName",
-                    "requiresConfiguration": false,
+                    "requiresConfiguration": true,
                     "requiresConnection": false,
                     "isOpen": true
                   },
                   "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
                     "allowsInlineDefinition": true,
@@ -2949,18 +2951,17 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
-                  "required": false,
+                  "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
                     "actingParameters": [],
                     "partOrder": 1,
                     "providerName": "modelName",
-                    "requiresConfiguration": false,
+                    "requiresConfiguration": true,
                     "requiresConnection": false,
                     "isOpen": true
                   },
                   "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
                     "allowsInlineDefinition": true,
@@ -3437,18 +3438,17 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
-                  "required": false,
+                  "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
                     "actingParameters": [],
                     "partOrder": 1,
                     "providerName": "modelName",
-                    "requiresConfiguration": false,
+                    "requiresConfiguration": true,
                     "requiresConnection": false,
                     "isOpen": true
                   },
                   "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
                     "allowsInlineDefinition": true,
@@ -3899,18 +3899,17 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
-                  "required": false,
+                  "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
                     "actingParameters": [],
                     "partOrder": 1,
                     "providerName": "modelName",
-                    "requiresConfiguration": false,
+                    "requiresConfiguration": true,
                     "requiresConnection": false,
                     "isOpen": true
                   },
                   "expressionSupport": "SUPPORTED",
-                  "defaultValue": "text-embedding-ada-002",
                   "role": "BEHAVIOUR",
                   "dslConfiguration": {
                     "allowsInlineDefinition": true,
