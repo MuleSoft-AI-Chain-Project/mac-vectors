@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.1.30</version>
+    <version>0.1.31</version>
     <packaging>mule-extension</packaging>
-    <name>MuleChain Vectors</name>
+    <name>MAC Vectors</name>
 
     <parent>
         <groupId>org.mule.extensions</groupId>
