@@ -64,6 +64,8 @@ import dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig;
 import dev.langchain4j.store.embedding.weaviate.WeaviateEmbeddingStore;
 
 import org.mule.runtime.extension.api.annotation.param.Config;
+import com.mule.mulechain.vectors.internal.storage.S3FileReader;
+import com.mule.mulechain.vectors.internal.helpers.storageTypeParameters;
 
 
 /**
@@ -453,6 +455,7 @@ public class MuleChainVectorsOperations {
   @Alias("Embedding-add-folder-to-store")
   public InputStream addFolderToStore(String storeName, String folderPath, @Config MuleChainVectorsConfiguration configuration,
                                 @ParameterGroup(name = "Context") fileTypeParameters fileType, 
+                                @ParameterGroup(name = "Storage") storageTypeParameters storageType,  
                                 int maxSegmentSizeInChars, int maxOverlapSizeInChars,
                                 @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams){
 
@@ -466,7 +469,24 @@ public class MuleChainVectorsOperations {
         .embeddingStore(store)
         .build();
 
+    JSONObject config = readConfigFile(configuration.getConfigFilePath());
+    JSONObject jsonObject = new JSONObject();
+    System.out.println("Storage Type: " + storageType.getStorageType());
+    if (storageType.getStorageType().equals("S3") && !fileType.getFileType().equals("url")) {
+      JSONObject s3Json = config.getJSONObject("S3");
+      String awsKey = s3Json.getString("AWS_ACCESS_KEY_ID");
+      String awsSecret = s3Json.getString("AWS_SECRET_ACCESS_KEY");
+      String awsRegion = s3Json.getString("AWS_DEFAULT_REGION");
+      String s3Bucket = s3Json.getString("AWS_S3_BUCKET");
+      jsonObject = ingestFromS3Folder(folderPath, ingestor, storeName, fileType, awsKey, awsSecret, awsRegion, s3Bucket);
+    } else {
+      jsonObject = ingestFromLocalFolder(folderPath, ingestor, storeName, fileType);
+    }
 
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
+  }
+    
+  private JSONObject ingestFromLocalFolder(String folderPath, EmbeddingStoreIngestor ingestor, String storeName, fileTypeParameters fileType) {
     long totalFiles = 0;
     try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
       totalFiles = paths.filter(Files::isRegularFile).count();
@@ -511,18 +531,37 @@ public class MuleChainVectorsOperations {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("filesCount", totalFiles);
     jsonObject.put("folderPath", folderPath);
     jsonObject.put("storeName", storeName);
     jsonObject.put("status", "updated");
-
-
-    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
+    return jsonObject;
   }
 
+  private JSONObject ingestFromS3Folder(String folderPath, EmbeddingStoreIngestor ingestor, String storeName, fileTypeParameters fileType, String awsKey, String awsSecret, String awsRegion, String s3Bucket)
+  {
+        S3FileReader s3FileReader = new S3FileReader(s3Bucket, awsKey, awsSecret, awsRegion);
+        long totalFiles = s3FileReader.readAllFiles(folderPath, ingestor, fileType);   
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("filesCount", totalFiles);
+        jsonObject.put("folderPath", folderPath);
+        jsonObject.put("storeName", storeName);
+        jsonObject.put("status", "updated");
+        return jsonObject; 
+  }
 
+  private JSONObject ingestFromS3File(String folderPath, EmbeddingStoreIngestor ingestor, String storeName, fileTypeParameters fileType, String awsKey, String awsSecret, String awsRegion, String s3Bucket)
+  {
+        S3FileReader s3FileReader = new S3FileReader(s3Bucket, awsKey, awsSecret, awsRegion);
+        s3FileReader.readFile(folderPath, fileType, ingestor);   
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("fileType", fileType.getFileType());
+        jsonObject.put("folderPath", folderPath);
+        jsonObject.put("storeName", storeName);
+        jsonObject.put("status", "updated");
+        return jsonObject; 
+  }
 
     /**
    * Add document of type text, pdf and url to embedding store, provide the storeName (Index, Collection, etc).
@@ -532,6 +571,7 @@ public class MuleChainVectorsOperations {
   @Alias("EMBEDDING-add-document-to-store")
   public InputStream addFileEmbedding(String storeName, String contextPath, @Config MuleChainVectorsConfiguration configuration,
                                  @ParameterGroup(name = "Context") fileTypeParameters fileType, 
+                                 @ParameterGroup(name = "Storage") storageTypeParameters storageType,
                                  int maxSegmentSizeInChars, int maxOverlapSizeInChars,
                                  @ParameterGroup(name = "Additional Properties") MuleChainVectorsModelParameters modelParams) {
 
@@ -546,6 +586,24 @@ public class MuleChainVectorsOperations {
         .embeddingStore(store)
         .build();
 
+    JSONObject config = readConfigFile(configuration.getConfigFilePath());
+    JSONObject jsonObject = new JSONObject();
+    System.out.println("Storage Type: " + storageType.getStorageType());
+    if (storageType.getStorageType().equals("S3") && !fileType.getFileType().equals("url")) {
+      JSONObject s3Json = config.getJSONObject("S3");
+      String awsKey = s3Json.getString("AWS_ACCESS_KEY_ID");
+      String awsSecret = s3Json.getString("AWS_SECRET_ACCESS_KEY");
+      String awsRegion = s3Json.getString("AWS_DEFAULT_REGION");
+      String s3Bucket = s3Json.getString("AWS_S3_BUCKET");
+      jsonObject = ingestFromS3File(contextPath, ingestor, storeName, fileType, awsKey, awsSecret, awsRegion, s3Bucket);
+    } else {
+      jsonObject = ingestFromLocalFile(contextPath, ingestor, storeName, fileType);
+    }
+
+    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
+  }
+
+  private JSONObject ingestFromLocalFile(String contextPath, EmbeddingStoreIngestor ingestor, String storeName, fileTypeParameters fileType) {
 
     System.out.println("file Type: " + fileType.getFileType());
     
@@ -606,7 +664,7 @@ public class MuleChainVectorsOperations {
     jsonObject.put("storeName", storeName);
     jsonObject.put("status", "updated");
 
-    return toInputStream(jsonObject.toString(), StandardCharsets.UTF_8);
+    return jsonObject;
   }
 
 
