@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mule.mulechain</groupId>
     <artifactId>mulechain-vectors</artifactId>
-    <version>0.1.31</version>
+    <version>0.1.31-add-s3</version>
     <packaging>mule-extension</packaging>
     <name>MAC Vectors</name>
 
@@ -69,15 +69,9 @@
 
     <dependencies>
 		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>aws-sdk-java</artifactId>
-			<version>2.20.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>auth</artifactId>
-			<version>2.20.2</version>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-document-loader-amazon-s3</artifactId>
+			<version>0.35.0</version>
 		</dependency>
 		
         <dependency>
