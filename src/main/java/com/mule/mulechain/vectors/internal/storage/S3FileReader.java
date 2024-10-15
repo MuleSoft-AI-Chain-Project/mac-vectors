@@ -59,6 +59,7 @@ public class S3FileReader {
         for (Document document : documents) {
             ingestor.ingest(document);
             totalFiles += 1;
+            System.out.println("Ingesting File " + totalFiles + ": " + document.metadata().toMap().get("source"));
         }
         System.out.println("Total number of files processed: " + totalFiles);
         return totalFiles;
