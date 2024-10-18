@@ -37,7 +37,8 @@ import dev.langchain4j.data.document.loader.UrlDocumentLoader;
 import dev.langchain4j.data.document.parser.TextDocumentParser;
 import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
-import dev.langchain4j.data.document.transformer.HtmlTextExtractor;
+//import dev.langchain4j.data.document.transformer.HtmlTextExtractor;
+import dev.langchain4j.data.document.transformer.jsoup.HtmlToTextDocumentTransformer;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -385,7 +386,7 @@ public class MuleChainVectorsOperations {
         }
 
         Document htmlDocument = UrlDocumentLoader.load(url, new TextDocumentParser());
-        HtmlTextExtractor transformer = new HtmlTextExtractor(null, null, true);
+        HtmlToTextDocumentTransformer transformer = new HtmlToTextDocumentTransformer(null, null, true);
         document = transformer.transform(htmlDocument);
         document.metadata().add("url", contextPath);
         splitter = DocumentSplitters.recursive(maxSegmentSizeInChars, maxOverlapSizeInChars);
@@ -428,7 +429,7 @@ public class MuleChainVectorsOperations {
         }
 
         Document htmlDocument = UrlDocumentLoader.load(url, new TextDocumentParser());
-        HtmlTextExtractor transformer = new HtmlTextExtractor(null, null, true);
+        HtmlToTextDocumentTransformer transformer = new HtmlToTextDocumentTransformer(null, null, true);
         document = transformer.transform(htmlDocument);
         document.metadata().add("url", contextPath);
 
@@ -646,7 +647,7 @@ public class MuleChainVectorsOperations {
         }
 
         Document htmlDocument = UrlDocumentLoader.load(url, new TextDocumentParser());
-        HtmlTextExtractor transformer = new HtmlTextExtractor(null, null, true);
+        HtmlToTextDocumentTransformer transformer = new HtmlToTextDocumentTransformer(null, null, true);
         document = transformer.transform(htmlDocument);
         document.metadata().add("url", contextPath);
         ingestor.ingest(document);

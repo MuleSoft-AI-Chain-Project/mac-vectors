@@ -1,14 +1,14 @@
 {
   "name": "MAC Vectors",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
-  "version": "0.1.31",
+  "version": "0.1.33-SNAPSHOT",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "vectors",
     "namespace": "http://www.mulesoft.org/schema/mule/vectors",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/vectors/current/mule-vectors.xsd",
-    "schemaVersion": "0.1.31",
+    "schemaVersion": "0.1.33-SNAPSHOT",
     "xsdFileName": "mule-vectors.xsd"
   },
   "resources": [],
@@ -1757,6 +1757,56 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "valueProviderModel": {
+                    "actingParameters": [],
+                    "partOrder": 1,
+                    "providerName": "storageType",
+                    "requiresConfiguration": false,
+                    "requiresConnection": false,
+                    "isOpen": true
+                  },
+                  "expressionSupport": "SUPPORTED",
+                  "defaultValue": "Local",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 9
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "storageType",
+                  "description": "",
+                  "modelProperties": {}
+                }
+              ],
+              "exclusiveParametersModels": [],
+              "layoutModel": {
+                "password": false,
+                "text": false,
+                "query": false,
+                "order": 3
+              },
+              "showInDsl": false,
+              "name": "Storage",
+              "description": "",
+              "modelProperties": {}
+            },
+            {
+              "parameters": [
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
                   "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
@@ -1778,7 +1828,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 9
+                    "order": 10
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -1791,7 +1841,7 @@
                 "password": false,
                 "text": false,
                 "query": false,
-                "order": 3
+                "order": 4
               },
               "showInDsl": false,
               "name": "Additional Properties",
@@ -1819,7 +1869,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 10,
+                    "order": 11,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1850,7 +1900,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 11,
+                    "order": 12,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -1867,7 +1917,7 @@
                 "password": false,
                 "text": false,
                 "query": false,
-                "order": 4
+                "order": 5
               },
               "showInDsl": false,
               "name": "Output",
@@ -2947,6 +2997,56 @@
                     "type": "String"
                   },
                   "hasDynamicType": false,
+                  "required": false,
+                  "isConfigOverride": false,
+                  "valueProviderModel": {
+                    "actingParameters": [],
+                    "partOrder": 1,
+                    "providerName": "storageType",
+                    "requiresConfiguration": false,
+                    "requiresConnection": false,
+                    "isOpen": true
+                  },
+                  "expressionSupport": "SUPPORTED",
+                  "defaultValue": "Local",
+                  "role": "BEHAVIOUR",
+                  "dslConfiguration": {
+                    "allowsInlineDefinition": true,
+                    "allowsReferences": true,
+                    "allowTopLevelDefinition": false
+                  },
+                  "layoutModel": {
+                    "password": false,
+                    "text": false,
+                    "query": false,
+                    "order": 9
+                  },
+                  "allowedStereotypeModels": [],
+                  "name": "storageType",
+                  "description": "",
+                  "modelProperties": {}
+                }
+              ],
+              "exclusiveParametersModels": [],
+              "layoutModel": {
+                "password": false,
+                "text": false,
+                "query": false,
+                "order": 3
+              },
+              "showInDsl": false,
+              "name": "Storage",
+              "description": "",
+              "modelProperties": {}
+            },
+            {
+              "parameters": [
+                {
+                  "type": {
+                    "format": "java",
+                    "type": "String"
+                  },
+                  "hasDynamicType": false,
                   "required": true,
                   "isConfigOverride": false,
                   "valueProviderModel": {
@@ -2968,7 +3068,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 9
+                    "order": 10
                   },
                   "allowedStereotypeModels": [],
                   "name": "modelName",
@@ -2981,7 +3081,7 @@
                 "password": false,
                 "text": false,
                 "query": false,
-                "order": 3
+                "order": 4
               },
               "showInDsl": false,
               "name": "Additional Properties",
@@ -3009,7 +3109,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 10,
+                    "order": 11,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -3040,7 +3140,7 @@
                     "password": false,
                     "text": false,
                     "query": false,
-                    "order": 11,
+                    "order": 12,
                     "tabName": "Advanced"
                   },
                   "allowedStereotypeModels": [],
@@ -3057,7 +3157,7 @@
                 "password": false,
                 "text": false,
                 "query": false,
-                "order": 4
+                "order": 5
               },
               "showInDsl": false,
               "name": "Output",
