@@ -39,14 +39,18 @@ class MetadataFilterHelperTest {
   void fromExpression_shouldParseAndOrComposite() {
     Filter filter = MetadataFilterHelper.fromExpression("foo = 'bar' AND num > 5");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("And").contains("IsEqualTo").contains("IsGreaterThan");
+    assertThat(filter.toString()).contains("And").contains("IsEqualTo").contains("IsGreaterThan")
+        .contains("key=foo, comparisonValue=bar")
+        .contains("key=num, comparisonValue=5");
   }
 
   @Test
   void fromExpression_shouldParseParentheses() {
     Filter filter = MetadataFilterHelper.fromExpression("(foo = 'bar' OR num < 3)");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("Or").contains("IsEqualTo").contains("IsLessThan");
+    assertThat(filter.toString()).contains("Or").contains("IsEqualTo").contains("IsLessThan")
+        .contains("key=foo, comparisonValue=bar")
+        .contains("key=num, comparisonValue=3");
   }
 
   @Test
@@ -91,21 +95,30 @@ class MetadataFilterHelperTest {
   void fromExpression_multipleAndConditions() {
     Filter filter = MetadataFilterHelper.fromExpression("a = 'x' AND b = 'y' AND c = 'z'");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("And");
+    assertThat(filter.toString()).contains("And")
+        .contains("key=a, comparisonValue=x")
+        .contains("key=b, comparisonValue=y")
+        .contains("key=c, comparisonValue=z");
   }
 
   @Test
   void fromExpression_multipleOrConditions() {
     Filter filter = MetadataFilterHelper.fromExpression("a = 'x' OR b = 'y' OR c = 'z'");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("Or");
+    assertThat(filter.toString()).contains("Or")
+        .contains("key=a, comparisonValue=x")
+        .contains("key=b, comparisonValue=y")
+        .contains("key=c, comparisonValue=z");
   }
 
   @Test
   void fromExpression_nestedParentheses() {
     Filter filter = MetadataFilterHelper.fromExpression("(a = 'x' AND b = 'y') OR (c = 'z')");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("Or");
+    assertThat(filter.toString()).contains("Or")
+        .contains("key=a, comparisonValue=x")
+        .contains("key=b, comparisonValue=y")
+        .contains("key=c, comparisonValue=z");
   }
 
   @Test
@@ -119,7 +132,8 @@ class MetadataFilterHelperTest {
   void fromExpression_containsWithDoubleQuotes() {
     Filter filter = MetadataFilterHelper.fromExpression("CONTAINS(name, \"hello\")");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("ContainsString");
+    assertThat(filter.toString()).contains("ContainsString")
+        .contains("key=name, comparisonValue=hello");
   }
 
   @Test
@@ -178,6 +192,10 @@ class MetadataFilterHelperTest {
   void fromExpression_complexNestedExpression() {
     Filter filter = MetadataFilterHelper.fromExpression("(a = 1 AND b = 2) OR (c = 3 AND d = 4)");
     assertThat(filter).isNotNull();
-    assertThat(filter.toString()).contains("Or").contains("And");
+    assertThat(filter.toString()).contains("Or").contains("And")
+        .contains("key=a, comparisonValue=1")
+        .contains("key=b, comparisonValue=2")
+        .contains("key=c, comparisonValue=3")
+        .contains("key=d, comparisonValue=4");
   }
 }

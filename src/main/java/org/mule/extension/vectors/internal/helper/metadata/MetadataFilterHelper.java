@@ -319,9 +319,9 @@ public class MetadataFilterHelper {
   }
 
   private static int skipOperatorAndContinue(String expression, int currentIndex, OperatorType foundOp) {
-    int skipLength = (foundOp == OperatorType.AND ? "AND".length() : "OR".length()) - 1;
-    for (int skip = 0; skip < skipLength; skip++) {
-      if (currentIndex + skip + 1 < expression.length()) {
+    int skipLength = (foundOp == OperatorType.AND ? "AND".length() : "OR".length());
+    for (int skip = 1; skip < skipLength; skip++) {
+      if (currentIndex + skip < expression.length()) {
         // Skip the operator characters
       }
     }
